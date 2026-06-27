@@ -1,460 +1,850 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>C806 | Commissioning checklist · INGETEAM</title>
-<style>
-:root{
-  --bg1:#f4f6ff; --bg2:#e9efff;
-  --panel:#ffffff; --panel2:#f7f8fc; --line:#d7deee;
-  --text:#0b1220; --muted:#40506b;
-  --g:#22c55e; --y:#f59e0b; --r:#f87171; --a:#6d28d9;
-  --rp:#fca5a5; /* pastel red */
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(900px 520px at 12% 0%, rgba(109,40,217,.12) 0%, transparent 60%), radial-gradient(900px 520px at 88% 10%, rgba(252,165,165,.10) 0%, transparent 55%), linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text)}
-header{padding:18px 16px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(255,255,255,.90);backdrop-filter:blur(10px);z-index:10}
-.hrow{display:flex;gap:12px;align-items:end;flex-wrap:wrap;justify-content:space-between}
-h1{margin:0;font-size:16px;letter-spacing:.2px}
-.meta{color:var(--muted);font-size:12px;margin-top:6px;display:flex;gap:12px;flex-wrap:wrap}
-.toolbar{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-input{flex:1;min-width:260px;background:#fff;border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:12px;outline:none}
-.toggle{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#fff;}
-.toggle input{width:16px;height:16px;min-width:auto;flex:0;padding:0;border-radius:4px}
-main{padding:0 16px 18px;max-width:1320px;margin:0 auto}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:14px 0 16px}
-.kpi{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:12px}
-.kpi .t{font-size:12px;color:var(--muted)}
-.kpi .v{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:6px}
-.kpi .pct{font-size:22px;font-weight:700;letter-spacing:.2px}
-.dot{width:10px;height:10px;border-radius:999px;display:inline-block}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
-.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:18px;padding:14px}
-.summary{display:flex;justify-content:space-between;align-items:center;gap:10px;user-select:none}
-.summary h2{margin:0;font-size:13px;color:var(--text)}
-.badgePct{font-size:12px;color:var(--muted);cursor:pointer}
-.bar{height:10px;background:rgba(159,176,208,.14);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:10px 0 10px}
-.fill{height:100%;width:0%;background:linear-gradient(90deg,var(--a),var(--g))}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C806 — Commissioning</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 10px}
-.tab{cursor:pointer;user-select:none;font-size:12px;color:var(--text);border:1px solid var(--line);background:#fff;padding:7px 10px;border-radius:999px}
-.tab.active{background:rgba(124,58,237,.20);border-color:rgba(124,58,237,.45)}
+    :root {
+      --bg:         #0f1117;
+      --surface:    #181c26;
+      --surface2:   #1f2435;
+      --border:     #2a3045;
+      --border2:    #3a4260;
+      --text:       #e8ecf4;
+      --muted:      #6b7594;
+      --accent:     #4f8ef7;
+      --accent-dim: rgba(79,142,247,0.12);
+      --green:      #34d17a;
+      --green-dim:  rgba(52,209,122,0.12);
+      --amber:      #f5a623;
+      --amber-dim:  rgba(245,166,35,0.12);
+      --red:        #f05252;
+      --red-dim:    rgba(240,82,82,0.10);
+      --radius:     10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-.pssb{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.sub{border:1px solid var(--line);border-radius:16px;padding:10px;background:#fff}
-.sub h3{margin:0 0 8px;font-size:12px;color:var(--text);display:flex;justify-content:space-between;align-items:center}
+    /* ─── UTIL ─── */
+    .hidden { display: none !important; }
+    button { font-family: 'Inter', sans-serif; cursor: pointer; }
 
-.list{display:grid;gap:6px;margin-top:8px}
-.item{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#fff}
-.item .k{font-size:12px;color:var(--muted);line-height:1.25}
-.badge{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);white-space:nowrap;color:var(--text);background:#fff}
-.badge.x{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.55);color:#166534;font-weight:700}
-.badge.todo{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.35);color:#7f1d1d}
-.badge.na{background:rgba(159,176,208,.14);border-color:#cbd5e1;color:#334155}
+    /* ══════════════════════════════════════
+       LOGIN OVERLAY
+    ══════════════════════════════════════ */
+    #loginOverlay {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 999;
+    }
+    .login-box {
+      width: 360px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 36px;
+    }
+    .login-logo {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 32px;
+    }
+    .login-logo .icon {
+      width: 40px; height: 40px;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .login-logo h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+    .login-logo p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .login-field { margin-bottom: 16px; }
+    .login-field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 7px; }
+    .login-field input {
+      width: 100%; padding: 10px 14px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif;
+      outline: none; transition: border-color 0.15s;
+    }
+    .login-field input:focus { border-color: var(--accent); }
+    .login-btn {
+      width: 100%; padding: 11px;
+      background: var(--accent); border: none; border-radius: 8px;
+      color: #fff; font-size: 14px; font-weight: 600;
+      margin-top: 8px; transition: opacity 0.15s;
+    }
+    .login-btn:hover { opacity: 0.88; }
+    .login-error {
+      font-size: 12px; color: var(--red);
+      margin-top: 12px; text-align: center; min-height: 18px;
+    }
 
-.details{margin-top:8px}
-.details[hidden]{display:none}
+    /* ══════════════════════════════════════
+       CONFIG MODAL (GitHub token)
+    ══════════════════════════════════════ */
+    #configModal {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 900;
+    }
+    .config-box {
+      width: 480px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px 30px;
+    }
+    .config-box h2 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .config-box p  { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+    .config-field { margin-bottom: 14px; }
+    .config-field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px; }
+    .config-field input {
+      width: 100%; padding: 9px 12px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 7px; color: var(--text); font-size: 13px; font-family: 'JetBrains Mono', monospace;
+      outline: none; transition: border-color 0.15s;
+    }
+    .config-field input:focus { border-color: var(--accent); }
+    .config-hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+    .config-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-primary {
+      flex: 1; padding: 10px;
+      background: var(--accent); border: none; border-radius: 8px;
+      color: #fff; font-size: 13px; font-weight: 600; transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-secondary {
+      padding: 10px 18px;
+      background: none; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--muted); font-size: 13px; transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-secondary:hover { color: var(--text); border-color: var(--border2); }
 
-@media (max-width: 760px){ .pssb{grid-template-columns:1fr;} }
+    /* ══════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════ */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 58px;
+      display: flex; align-items: center; gap: 14px;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .h-logo { display: flex; align-items: center; gap: 10px; }
+    .h-logo .icon {
+      width: 32px; height: 32px;
+      background: var(--accent-dim); border: 1px solid var(--accent);
+      border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 15px;
+    }
+    .h-logo h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.2px; }
+    .h-logo span { font-size: 12px; color: var(--muted); }
 
-.switchWrap{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.75);} 
-.switchLabel{font-size:12px;color:var(--muted);}
-.switch{width:46px;height:26px;border-radius:999px;border:1px solid var(--line);background:linear-gradient(180deg,#fff,#f5f7ff);position:relative;cursor:pointer;}
-.switch .knob{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:999px;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);transition:transform .18s ease, background .18s ease;}
-.switch[aria-pressed="true"]{background:linear-gradient(180deg, rgba(34,197,94,.25), rgba(34,197,94,.12));border-color:rgba(34,197,94,.35);} 
-.switch[aria-pressed="true"] .knob{transform:translateX(20px);background:linear-gradient(180deg,#dcfce7,#bbf7d0);border-color:rgba(34,197,94,.35);}
+    .h-global {
+      display: flex; align-items: center; gap: 10px;
+      margin-left: 24px;
+    }
+    .h-global-label { font-size: 11px; color: var(--muted); }
+    .h-global-bar { width: 100px; height: 3px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .h-global-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s; }
+    .h-global-pct { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); min-width: 32px; }
 
-.brandRow{display:flex;align-items:center;gap:12px}
-.brandLogo{height:34px;width:auto;display:block}
-.brandTitles h1{margin:0;font-size:16px;letter-spacing:.2px}
-.brandSub{margin-top:2px;font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.6px}
+    .h-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .h-badge {
+      font-size: 11px; font-weight: 600; padding: 3px 10px;
+      border-radius: 20px; border: 1px solid;
+    }
+    .h-badge.admin  { color: var(--amber); border-color: rgba(245,166,35,0.4); background: var(--amber-dim); }
+    .h-badge.viewer { color: var(--muted); border-color: var(--border); background: var(--surface2); }
 
-/* Progress: gradient only up to pct (fill element), dots match gradient */
-:root{--prog0:#ef4444;--prog1:#3b82f6;}
-.bar{background:rgba(148,163,184,.18);border-color:rgba(34,48,83,.18);}
-.fill{background:linear-gradient(90deg, var(--prog0) 0%, var(--prog1) 100%);}
-.dot{background:var(--dot, var(--prog0));}
-</style>
+    .h-save-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 14px;
+      background: var(--green-dim); border: 1px solid rgba(52,209,122,0.3);
+      border-radius: 7px; color: var(--green); font-size: 12px; font-weight: 600;
+      transition: opacity 0.15s;
+    }
+    .h-save-btn:hover { opacity: 0.8; }
+    .h-save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .h-config-btn, .h-logout-btn {
+      width: 32px; height: 32px;
+      background: none; border: 1px solid var(--border);
+      border-radius: 7px; color: var(--muted); font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .h-config-btn:hover, .h-logout-btn:hover { color: var(--text); border-color: var(--border2); }
+
+    .save-status {
+      font-size: 11px; color: var(--muted);
+    }
+    .save-status.ok   { color: var(--green); }
+    .save-status.err  { color: var(--red); }
+    .save-status.saving { color: var(--amber); }
+
+    /* ══════════════════════════════════════
+       MAIN
+    ══════════════════════════════════════ */
+    main { max-width: 1100px; margin: 0 auto; padding: 0 24px 60px; }
+
+    /* ─── Summary ─── */
+    .section-label {
+      font-size: 11px; font-weight: 500; color: var(--muted);
+      letter-spacing: 1.2px; text-transform: uppercase;
+      padding: 32px 0 14px;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 10px;
+    }
+    .s-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px 18px 16px;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    }
+    .s-card:hover { border-color: var(--accent); background: var(--surface2); }
+    .s-card-tag  { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 0.9px; text-transform: uppercase; margin-bottom: 8px; }
+    .s-card-name { font-size: 13px; font-weight: 600; margin-bottom: 14px; line-height: 1.3; }
+    .s-pct-row   { display: flex; align-items: center; gap: 8px; }
+    .s-bar-wrap  { flex: 1; height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .s-bar-fill  { height: 100%; border-radius: 4px; transition: width 0.5s; }
+    .s-pct-num   { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; min-width: 30px; text-align: right; }
+
+    /* ─── Detail ─── */
+    .detail-top {
+      display: flex; align-items: center; gap: 12px;
+      padding: 28px 0 20px;
+    }
+    .back-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); padding: 5px 12px; border-radius: 6px;
+      font-size: 12px; transition: color 0.15s, border-color 0.15s;
+    }
+    .back-btn:hover { color: var(--text); border-color: var(--accent); }
+    .detail-top h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.4px; }
+
+    /* ─── Subgroup tabs ─── */
+    .sub-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .sub-tab {
+      padding: 6px 15px; border-radius: 20px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--muted); font-size: 12px; font-weight: 500;
+      display: flex; align-items: center; gap: 7px;
+      transition: all 0.15s;
+    }
+    .sub-tab:hover { border-color: var(--accent); color: var(--text); }
+    .sub-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .sub-tab .tpct { font-family: 'JetBrains Mono', monospace; font-size: 10px; opacity: 0.85; }
+
+    /* ─── Progress strip ─── */
+    .prog-strip {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 18px; margin-bottom: 16px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    }
+    .prog-strip-label { font-size: 12px; color: var(--muted); }
+    .prog-wrap { flex: 1; height: 5px; background: var(--border); border-radius: 5px; overflow: hidden; }
+    .prog-fill  { height: 100%; border-radius: 5px; transition: width 0.4s; }
+    .prog-pct   { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; min-width: 36px; text-align: right; }
+
+    /* ─── Task table ─── */
+    .task-table {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .t-head, .t-row {
+      display: grid;
+      align-items: center;
+      padding: 10px 18px;
+    }
+    .t-head {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .t-row { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+    .t-row:last-child { border-bottom: none; }
+    .t-row:hover { background: var(--surface2); }
+
+    .th { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; text-align: center; }
+    .th:first-child { text-align: left; }
+
+    .t-name { font-size: 13px; }
+    .t-cell { display: flex; align-items: center; justify-content: center; }
+
+    /* Status toggle — admin mode shows clickable cycle */
+    .status-btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid var(--border);
+      background: none; display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s, background 0.15s;
+      position: relative;
+    }
+    .status-btn[data-v="done"]    { border-color: var(--green);  background: var(--green-dim); }
+    .status-btn[data-v="pending"] { border-color: var(--border); background: none; }
+    .status-btn[data-v="na"]      { border-color: var(--muted);  background: rgba(107,117,148,0.1); }
+    .status-btn.editable:hover    { transform: scale(1.1); cursor: pointer; }
+
+    .dot { width: 9px; height: 9px; border-radius: 50%; }
+    .dot-done    { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .dot-pending { background: var(--border); border: 1.5px solid var(--muted); }
+    .dot-na      { background: var(--muted); }
+
+    /* legend */
+    .t-legend {
+      display: flex; gap: 20px; align-items: center;
+      padding: 12px 18px;
+      border-top: 1px solid var(--border); background: var(--surface2);
+    }
+    .t-legend span { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+
+    /* ─── Toast ─── */
+    #toast {
+      position: fixed; bottom: 28px; right: 28px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 18px;
+      font-size: 13px; color: var(--text);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      transform: translateY(80px); opacity: 0;
+      transition: transform 0.25s, opacity 0.25s;
+      z-index: 200;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.ok  { border-color: var(--green); color: var(--green); }
+    #toast.err { border-color: var(--red);   color: var(--red); }
+  </style>
 </head>
 <body>
-<header>
-  <div class="hrow">
-    <div>
-      <div class="brandRow"><img class="brandLogo" src="data:image/jpeg;base64,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" alt="INGETEAM logo" /><div class="brandTitles"><h1>C806 | Commissioning checklist</h1><div class="brandSub">INGETEAM</div></div></div>
-      <div class="meta"></div>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="icon">⚡</div>
+      <div>
+        <h1>C806 Commissioning</h1>
+        <p>Panel de seguimiento</p>
+      </div>
     </div>
-    <div class="switchWrap">
-      <span class="switchLabel">Pendientes</span>
-      <button id="onlyPendingBtn" class="switch" type="button" aria-pressed="false">
-        <span class="knob"></span>
-      </button>
+    <div class="login-field">
+      <label>Usuario</label>
+      <input id="loginUser" type="text" placeholder="usuario" autocomplete="username" />
+    </div>
+    <div class="login-field">
+      <label>Contraseña</label>
+      <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ══════════════ GITHUB CONFIG MODAL ══════════════ -->
+<div id="configModal" class="hidden">
+  <div class="config-box">
+    <h2>⚙️ Configuración GitHub</h2>
+    <p>Para guardar cambios directamente en el repositorio, introduce los datos de acceso. Solo el Admin puede editar esta configuración.</p>
+    <div class="config-field">
+      <label>Token de acceso personal (GitHub)</label>
+      <input id="cfgToken" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+      <div class="config-hint">Necesita permiso <code>repo</code> → Contents (write). <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--accent)">Crear token →</a></div>
+    </div>
+    <div class="config-field">
+      <label>Propietario del repo</label>
+      <input id="cfgOwner" type="text" placeholder="tu-usuario-github" />
+    </div>
+    <div class="config-field">
+      <label>Nombre del repositorio</label>
+      <input id="cfgRepo" type="text" placeholder="c806-commissioning" />
+    </div>
+    <div class="config-field">
+      <label>Rama</label>
+      <input id="cfgBranch" type="text" placeholder="main" value="main" />
+    </div>
+    <div class="config-field">
+      <label>Ruta del fichero data.json</label>
+      <input id="cfgPath" type="text" placeholder="data.json" value="data.json" />
+    </div>
+    <div class="config-actions">
+      <button class="btn-primary" onclick="saveConfig()">Guardar configuración</button>
+      <button class="btn-secondary" onclick="closeConfig()">Cancelar</button>
     </div>
   </div>
+</div>
+
+<!-- ══════════════ APP ══════════════ -->
+<div id="app" class="hidden">
+
+  <header>
+    <div class="h-logo">
+      <div class="icon">⚡</div>
+      <div>
+        <h1>C806 Commissioning</h1>
+        <span id="hProject"></span>
+      </div>
+    </div>
+    <div class="h-global">
+      <span class="h-global-label">Global</span>
+      <div class="h-global-bar"><div class="h-global-fill" id="hGlobalFill"></div></div>
+      <span class="h-global-pct" id="hGlobalPct"></span>
+    </div>
+    <div class="h-right">
+      <span class="save-status" id="saveStatus"></span>
+      <button class="h-save-btn hidden" id="saveBtn" onclick="saveToGitHub()" title="Guardar en GitHub">
+        <span>↑</span> Guardar
+      </button>
+      <span class="h-badge" id="roleBadge"></span>
+      <button class="h-config-btn hidden" id="configBtn" onclick="openConfig()" title="Configuración GitHub">⚙</button>
+      <button class="h-logout-btn" onclick="doLogout()" title="Cerrar sesión">⏻</button>
+    </div>
   </header>
-<main>
-  <section class="kpis" id="kpis"></section>
-  <section class="grid" id="grid"></section>
-</main>
+
+  <main>
+    <!-- SUMMARY VIEW -->
+    <div id="summaryView">
+      <div class="section-label">Sistemas</div>
+      <div class="summary-grid" id="summaryGrid"></div>
+    </div>
+
+    <!-- DETAIL VIEW -->
+    <div id="detailView" class="hidden">
+      <div class="detail-top">
+        <button class="back-btn" onclick="showSummary()">← Volver</button>
+        <h2 id="detailTitle"></h2>
+      </div>
+      <div class="sub-tabs" id="subTabs"></div>
+      <div class="prog-strip">
+        <span class="prog-strip-label">Completado</span>
+        <div class="prog-wrap"><div class="prog-fill" id="progFill"></div></div>
+        <span class="prog-pct" id="progPct"></span>
+      </div>
+      <div class="task-table" id="taskTable"></div>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
 
 <script>
-const model = {"areas": {"PMS": {"type": "single", "pct": 30, "items": [{"label": "24Vdc en ESB", "st": "X"}, {"label": "Alimentación control", "st": "X"}, {"label": "Anillo ethernet", "st": "X"}, {"label": "Canales CAN", "st": "X"}, {"label": "Comms. RTU con EMS", "st": "X"}, {"label": "Comms. RTU IAS 1", "st": "X"}, {"label": "HMI cargado", "st": "X"}, {"label": "Señales con drives MP", "st": "X"}, {"label": "Señales con drives proa", "st": "X"}, {"label": "SW cargado", "st": "X"}, {"label": "Comms. RTU IAS 2", "st": ""}, {"label": "Funcionalidades básicas", "st": ""}, {"label": "Señales con EMS", "st": ""}, {"label": "Señales con Gens", "st": ""}, {"label": "Señales con MSB", "st": ""}]}, "EMS": {"type": "single", "pct": 50, "items": [{"label": "230Vac emergencia", "st": "X"}, {"label": "230Vac heater & light", "st": "X"}, {"label": "24Vdc", "st": "X"}, {"label": "Ajuste fuentes de alimentación", "st": "X"}, {"label": "Comms. RTU con IAS", "st": "X"}, {"label": "Comms. RTU con PMS", "st": "X"}, {"label": "Comms. TCP con Mdrive (MOXA)", "st": "X"}, {"label": "HMI cargado", "st": "X"}, {"label": "Señales con FC", "st": "X"}, {"label": "Señales con IAS", "st": "X"}, {"label": "Señales con PMS", "st": "X"}, {"label": "SW cargado", "st": "X"}, {"label": "Comms. TCP con BMS", "st": ""}, {"label": "E-stop", "st": ""}, {"label": "Fibra RAB", "st": ""}, {"label": "Señales con DP", "st": ""}, {"label": "Señales con RAB", "st": ""}]}, "BATTERIES": {"type": "single", "pct": 20, "items": [{"label": "Montaje racks", "st": "X"}, {"label": "Aislamiento y polaridad cables", "st": ""}, {"label": "Alimentaciones UPS y 230V fans", "st": ""}, {"label": "E-stop", "st": ""}, {"label": "Ethernet ring", "st": ""}, {"label": "Fuga de gases", "st": ""}]}, "RAB": {"type": "single", "pct": 0, "items": [{"label": "230Vac luces", "st": ""}, {"label": "230Vac principal", "st": ""}, {"label": "24Vdc UPS", "st": ""}, {"label": "Digitales con EMS", "st": ""}, {"label": "Fibra Bow drive", "st": ""}, {"label": "Fibra EMS", "st": ""}, {"label": "Fibra Multidrive", "st": ""}, {"label": "Fibra PMS", "st": ""}, {"label": "Fibra Swing-up drive", "st": ""}, {"label": "Fibras MP drives", "st": ""}, {"label": "Modificación router", "st": ""}]}, "SAFETY SYSTEM": {"type": "pssb", "pct": 70.0, "pct_ps": 70, "pct_sb": 70, "items": [{"label": "230Vac emergencia", "ps": "X", "sb": "X"}, {"label": "230Vac heater & light", "ps": "X", "sb": "X"}, {"label": "24Vdc principal", "ps": "X", "sb": "X"}, {"label": "HMI", "ps": "X", "sb": "X"}, {"label": "PT100 motor", "ps": "X", "sb": "X"}, {"label": "Señales con drive", "ps": "X", "sb": "X"}, {"label": "Señales con IAS", "ps": "X", "sb": "X"}, {"label": "Shutdown WB", "ps": "X", "sb": "X"}, {"label": "SW cargado", "ps": "X", "sb": "X"}, {"label": "Water leakage", "ps": "X", "sb": "X"}, {"label": "Comms. RTU PCS/IAS", "ps": "N.A.", "sb": "N.A."}, {"label": "Botón override (NC)", "ps": "", "sb": ""}, {"label": "Relé K05 y cableado", "ps": "", "sb": ""}, {"label": "Reset de IAS", "ps": "", "sb": ""}, {"label": "Safeties", "ps": "", "sb": ""}]}, "DRIVES": {"type": "group", "pct": null, "groups": {"MAIN PROP": {"type": "pssb", "pct_ps": 50, "pct_sb": 50, "items": [{"label": "Aislamiento cables GSC", "ps": "X", "sb": "X"}, {"label": "Alimentación auxiliar 440V", "ps": "X", "sb": "X"}, {"label": "Comms. TCP con IAS", "ps": "X", "sb": "X"}, {"label": "Digitales con IAS", "ps": "X", "sb": "X"}, {"label": "Digitales con MCB", "ps": "X", "sb": "X"}, {"label": "Encoder 1", "ps": "X", "sb": "X"}, {"label": "FW cargado", "ps": "X", "sb": "X"}, {"label": "HMI cargado", "ps": "X", "sb": "X"}, {"label": "Sentido rotación bombas", "ps": "X", "sb": "X"}, {"label": "Señales con PMS", "ps": "X", "sb": "X"}, {"label": "Shutdown WB", "ps": "X", "sb": "X"}, {"label": "Tierra instalación", "ps": "X", "sb": "X"}, {"label": "WCU llenado", "ps": "X", "sb": "X"}, {"label": "Agua primario", "ps": "", "sb": ""}, {"label": "E-stops", "ps": "", "sb": ""}, {"label": "Fibra RAB", "ps": "", "sb": ""}, {"label": "Firewall", "ps": "", "sb": ""}, {"label": "Primera energización GSC", "ps": "", "sb": ""}, {"label": "Primera energización MSC", "ps": "", "sb": ""}]}, "BOW": {"type": "single", "pct": 40, "items": [{"label": "Aislamiento cables GSC", "st": "X"}, {"label": "Alimentación auxiliar 440V", "st": "X"}, {"label": "Comms. TCP con IAS", "st": "X"}, {"label": "Digitales con IAS", "st": "X"}, {"label": "Encoder 1", "st": "X"}, {"label": "FW cargado", "st": "X"}, {"label": "MCB", "st": "X"}, {"label": "PT100 Motor winding + bearing", "st": "X"}, {"label": "Sentido rotación bombas", "st": "X"}, {"label": "Señales con PMS", "st": "X"}, {"label": "Tierra instalación", "st": "X"}, {"label": "WCU llenado", "st": "X"}, {"label": "Agua primario", "st": ""}, {"label": "E-stops", "st": ""}, {"label": "Fibra RAB", "st": ""}, {"label": "Firewall", "st": ""}, {"label": "HMI cargado", "st": ""}, {"label": "Primera energización GSC", "st": ""}, {"label": "Primera energización MSC", "st": ""}, {"label": "Safeties temperaturas motor", "st": ""}]}, "SWING-UP THR.": {"type": "single", "pct": 40, "items": [{"label": "Aislamiento cables GSC", "st": "X"}, {"label": "Alimentación auxiliar 440V", "st": "X"}, {"label": "Comms. TCP con IAS", "st": "X"}, {"label": "Digitales con IAS", "st": "X"}, {"label": "Encoder 1", "st": "X"}, {"label": "FW cargado", "st": "X"}, {"label": "MCB", "st": "X"}, {"label": "PT100 Motor winding + bearing", "st": "X"}, {"label": "Sentido rotación bombas", "st": "X"}, {"label": "Señales con PMS", "st": "X"}, {"label": "Tierra instalación", "st": "X"}, {"label": "WCU llenado", "st": "X"}, {"label": "Agua primario", "st": ""}, {"label": "E-stops", "st": ""}, {"label": "Fibra RAB", "st": ""}, {"label": "Firewall", "st": ""}, {"label": "HMI cargado", "st": ""}, {"label": "Primera energización GSC", "st": ""}, {"label": "Primera energización MSC", "st": ""}, {"label": "Safeties temperaturas motor", "st": ""}]}, "MULTIDRIVE": {"type": "single", "pct": 50, "items": [{"label": "Aislamiento cables GSC", "st": "X"}, {"label": "Alimentación auxiliar 440V", "st": "X"}, {"label": "Bender configurado", "st": "X"}, {"label": "Comms. TCP con EMS", "st": "X"}, {"label": "Comms. TCP con IAS", "st": "X"}, {"label": "Digitales con IAS", "st": "X"}, {"label": "FW cargado", "st": "X"}, {"label": "HMI cargado", "st": "X"}, {"label": "MCB", "st": "X"}, {"label": "Medida Vrst", "st": "X"}, {"label": "Sentido rotación bombas", "st": "X"}, {"label": "Tierra instalación", "st": "X"}, {"label": "Tª trafo cabecera (1 devanado)", "st": "X"}, {"label": "Tª trafo shore (1 devanado)", "st": "X"}, {"label": "WCU llenado", "st": "X"}, {"label": "Weidmuller - 10.100.1.196", "st": "X"}, {"label": "Agua primario", "st": ""}, {"label": "E-stops", "st": ""}, {"label": "Fibra RAB", "st": ""}, {"label": "Firewall", "st": ""}, {"label": "Medida Vshore", "st": ""}, {"label": "Primera energización DCDC", "st": ""}, {"label": "Primera energización GSC1", "st": ""}, {"label": "Primera energización GSC2", "st": ""}, {"label": "Safeties por Tª trafos", "st": ""}]}}}, "MOTORS": {"type": "group", "pct": null, "groups": {"MAIN PROP": {"type": "pssb", "pct_ps": 40, "pct_sb": 40, "items": [{"label": "Datasheet", "ps": "X", "sb": "X"}, {"label": "Encoder 1", "ps": "X", "sb": "X"}, {"label": "Faseado y pantallas", "ps": "X", "sb": "X"}, {"label": "PT100 bearing DE & NDE", "ps": "X", "sb": "X"}, {"label": "PT100 winding", "ps": "X", "sb": "X"}, {"label": "Tuberías cooling", "ps": "X", "sb": "X"}, {"label": "Water leakage 24Vdc", "ps": "X", "sb": "X"}, {"label": "Water leakage contacto", "ps": "X", "sb": "X"}, {"label": "Aislamiento cables", "ps": "", "sb": ""}, {"label": "Aislamiento windings", "ps": "", "sb": ""}, {"label": "Alineación", "ps": "", "sb": ""}, {"label": "Heaters", "ps": "", "sb": ""}, {"label": "Primera energización", "ps": "", "sb": ""}, {"label": "PT100 water IN & OUT", "ps": "", "sb": ""}, {"label": "Tierra instalación", "ps": "", "sb": ""}]}, "BOW": {"type": "single", "pct": 30, "items": [{"label": "Circuito eq. y datasheet", "st": "X"}, {"label": "Encoder 1", "st": "X"}, {"label": "PT100", "st": "X"}, {"label": "Tierra instalación", "st": "X"}, {"label": "Tuberías cooling", "st": "X"}, {"label": "Aislamiento cables", "st": ""}, {"label": "Aislamiento windings", "st": ""}, {"label": "Alineación", "st": ""}, {"label": "Desacoplado", "st": ""}, {"label": "Faseado y pantallas", "st": ""}, {"label": "Heaters", "st": ""}, {"label": "Primera energización", "st": ""}]}, "SWING-UP THR.": {"type": "single", "pct": 30, "items": [{"label": "Circuito eq. y datasheet", "st": "X"}, {"label": "Encoder 1", "st": "X"}, {"label": "PT100", "st": "X"}, {"label": "Tierra instalación", "st": "X"}, {"label": "Tuberías cooling", "st": "X"}, {"label": "Aislamiento cables", "st": ""}, {"label": "Aislamiento windings", "st": ""}, {"label": "Alineación", "st": ""}, {"label": "Faseado y pantallas", "st": ""}, {"label": "Heaters", "st": ""}, {"label": "Primera energización", "st": ""}]}}}, "TRAFOS": {"type": "group", "pct": null, "groups": {"HOTEL": {"type": "pssb", "pct_ps": 80, "pct_sb": 80, "items": [{"label": "Aislamiento cables", "ps": "X", "sb": "X"}, {"label": "Aislamiento windings", "ps": "X", "sb": "X"}, {"label": "Primera energización", "ps": "X", "sb": "X"}, {"label": "PT100 al IAS", "ps": "X", "sb": "X"}, {"label": "220Vac heaters - MSB", "ps": "", "sb": ""}]}, "MULTIDRIVE": {"type": "single", "pct": 80, "items": [{"label": "220Vac heaters desde MSB", "st": "X"}, {"label": "Aislamiento cables", "st": "X"}, {"label": "Aislamiento windings", "st": "X"}, {"label": "PT100", "st": "X"}, {"label": "Primera energización", "st": ""}]}, "SHORE": {"type": "single", "pct": 40, "items": [{"label": "PT100", "st": "X"}, {"label": "220Vac heaters", "st": ""}, {"label": "Aislamiento cables", "st": ""}, {"label": "Aislamiento windings", "st": ""}, {"label": "Links 1 a 1", "st": ""}, {"label": "Primera energización", "st": ""}]}}}, "MSB 440": {"type": "single", "pct": 60, "items": [{"label": "230Vac heaters P5", "st": "X"}, {"label": "24Vdc UPS", "st": "X"}, {"label": "Aislamiento barras", "st": "X"}, {"label": "Ajuste fuentes de alimentación", "st": "X"}, {"label": "Añadir bornas resis + cableado", "st": "X"}, {"label": "Cableado potencia check", "st": "X"}, {"label": "CAN y ethernet a ESB", "st": "X"}, {"label": "Digitales con IAS", "st": "X"}, {"label": "Emenasa - interconexión cuadros", "st": "X"}, {"label": "Instalar conversor fibra a TCP", "st": "X"}, {"label": "Placa características y pegatinas", "st": "X"}, {"label": "Primera energización", "st": "X"}, {"label": "Protecciones ABB", "st": "X"}, {"label": "Protecciones DEIF", "st": "X"}, {"label": "AVR y relé diferencial externo", "st": ""}, {"label": "DEIF configurados", "st": ""}, {"label": "Fibra a RAB", "st": ""}, {"label": "Interfaces engines", "st": ""}, {"label": "MTR configurados", "st": ""}]}}};
+// ═══════════════════════════════════════════════════════
+//  USERS  (hardcoded — change credentials here)
+// ═══════════════════════════════════════════════════════
+const USERS = {
+  "admin":  { password: "c806admin",  role: "admin"  },
+  "viewer": { password: "c806viewer", role: "viewer" }
+};
 
-// Alias RAB -> REMOTE ACCESS BOX
-if(model?.areas?.RAB && !model.areas['REMOTE ACCESS BOX']){ model.areas['REMOTE ACCESS BOX']=model.areas.RAB; }
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let session   = null;   // { username, role }
+let DATA      = null;   // loaded from GitHub or embedded fallback
+let fileSHA   = null;   // GitHub SHA of data.json (needed to update)
+let dirty     = false;  // unsaved changes pending
+let currentGroup    = null;
+let currentSubgroup = null;
 
+// GitHub config (persisted in localStorage — no secrets on server)
+let ghConfig = loadGhConfig();
 
-function groupPct(area){
-  if(!area || area.type!=='group') return (area && area.pct) || 0;
-  const gs=area.groups||{};
-  let acc=0, n=0;
-  for(const g of Object.values(gs)){
-    let p=null;
-    if(g.type==='pssb' && g.pct_ps!=null && g.pct_sb!=null){ p=(Number(g.pct_ps)+Number(g.pct_sb))/2; }
-    else if(typeof g.pct==='number'){ p=g.pct; }
-    if(p!=null && !isNaN(p)){ acc+=p; n++; }
+// ═══════════════════════════════════════════════════════
+//  EMBEDDED FALLBACK DATA  (used when GitHub not configured)
+// ═══════════════════════════════════════════════════════
+const FALLBACK_DATA = {"meta":{"project":"C806","title":"C806 Commissioning","lastUpdated":"2026-06-27T00:00:00Z"},"groups":{"SWITCHBOARDS":{"label":"Cuadros Eléctricos","icon":"🔌","subgroups":{"MAIN SWITCHBOARD 440":{"pct":0.9,"columns":["Estado"],"tasks":[{"name":"Emenasa - interconexión cuadros","values":["done"]},{"name":"Aislamiento barras","values":["done"]},{"name":"Ajuste fuentes de alimentación","values":["done"]},{"name":"MTR configurados","values":["done"]},{"name":"DEIF configurados","values":["done"]},{"name":"Cableado potencia check","values":["done"]},{"name":"24Vdc UPS","values":["done"]},{"name":"230Vac heaters P5","values":["done"]},{"name":"Añadir bornas resis + cableado","values":["done"]},{"name":"Placa características y pegatinas","values":["done"]},{"name":"AVR y relé diferencial incluido externo","values":["pending"]},{"name":"CAN y ethernet a ESB","values":["done"]},{"name":"Primera energización","values":["done"]},{"name":"Protecciones DEIF","values":["done"]},{"name":"Protecciones ABB","values":["done"]},{"name":"Digitales con IAS","values":["done"]},{"name":"Interfaces engines","values":["pending"]},{"name":"Instalar conversor fibra a TCP","values":["done"]},{"name":"Fibra a RAB","values":["pending"]},{"name":"24Vdc Generadores ajustada","values":["done"]}]},"REMOTE ACCESS BOX":{"pct":0.27,"columns":["Estado"],"tasks":[{"name":"Modificación router","values":["pending"]},{"name":"230Vac principal","values":["done"]},{"name":"230Vac luces","values":["done"]},{"name":"24Vdc UPS","values":["done"]},{"name":"Fibra EMS","values":["pending"]},{"name":"Fibra PMS","values":["pending"]},{"name":"Fibra Multidrive","values":["pending"]},{"name":"Fibras MP drives","values":["pending"]},{"name":"Fibra Bow drive","values":["pending"]},{"name":"Fibra Swing-up drive","values":["pending"]},{"name":"Digitales con EMS","values":["pending"]}]}}},"DRIVES":{"label":"Variadores","icon":"⚙️","subgroups":{"MAIN PROPULSION PS":{"pct":0.6,"columns":["PS"],"tasks":[{"name":"WCU llenado","values":["done"]},{"name":"Sentido rotación bombas","values":["done"]},{"name":"Tierra instalación","values":["done"]},{"name":"Agua primario","values":["pending"]},{"name":"Encoder 1","values":["done"]},{"name":"FW cargado","values":["done"]},{"name":"HMI cargado","values":["done"]},{"name":"Aislamiento cables GSC","values":["done"]},{"name":"Alimentación auxiliar 440V","values":["done"]},{"name":"Digitales con MCB","values":["done"]},{"name":"E-stops","values":["done"]},{"name":"Fibra RAB","values":["pending"]},{"name":"Firewall","values":["pending"]},{"name":"Comms. TCP con IAS","values":["done"]},{"name":"Primera energización GSC","values":["done"]},{"name":"Primera energización MSC","values":["pending"]},{"name":"Digitales con IAS","values":["done"]},{"name":"Señales con PMS","values":["done"]},{"name":"Shutdown WB","values":["done"]}]},"MAIN PROPULSION SB":{"pct":0.6,"columns":["SB"],"tasks":[{"name":"WCU llenado","values":["done"]},{"name":"Sentido rotación bombas","values":["done"]},{"name":"Tierra instalación","values":["done"]},{"name":"Agua primario","values":["pending"]},{"name":"Encoder 1","values":["done"]},{"name":"FW cargado","values":["done"]},{"name":"HMI cargado","values":["done"]},{"name":"Aislamiento cables GSC","values":["done"]},{"name":"Alimentación auxiliar 440V","values":["done"]},{"name":"Digitales con MCB","values":["done"]},{"name":"E-stops","values":["done"]},{"name":"Fibra RAB","values":["pending"]},{"name":"Firewall","values":["pending"]},{"name":"Comms. TCP con IAS","values":["done"]},{"name":"Primera energización GSC","values":["done"]},{"name":"Primera energización MSC","values":["pending"]},{"name":"Digitales con IAS","values":["done"]},{"name":"Señales con PMS","values":["done"]},{"name":"Shutdown WB","values":["done"]}]},"BOW":{"pct":0.4,"columns":["Estado"],"tasks":[{"name":"WCU llenado","values":["done"]},{"name":"Sentido rotación bombas","values":["done"]},{"name":"Tierra instalación","values":["done"]},{"name":"Encoder 1","values":["done"]},{"name":"FW cargado","values":["done"]},{"name":"HMI cargado","values":["done"]},{"name":"Agua primario","values":["pending"]},{"name":"Aislamiento cables GSC","values":["done"]},{"name":"Alimentación auxiliar 440V","values":["done"]},{"name":"MCB","values":["done"]},{"name":"E-stops","values":["done"]},{"name":"Fibra RAB","values":["done"]},{"name":"Firewall instalado","values":["done"]},{"name":"Comms. TCP con IAS","values":["done"]},{"name":"Primera energización GSC","values":["done"]},{"name":"Primera energización MSC","values":["done"]},{"name":"Ajuste IF y VC vacío","values":["done"]},{"name":"Ajuste en carga","values":["pending"]},{"name":"PT100 Motor winding + bearing","values":["done"]},{"name":"Safeties temperaturas motor","values":["pending"]},{"name":"Digitales con IAS","values":["done"]},{"name":"Señales con PMS","values":["done"]}]},"SWING-UP THR.":{"pct":0.4,"columns":["Estado"],"tasks":[{"name":"WCU llenado","values":["done"]},{"name":"Sentido rotación bombas","values":["done"]},{"name":"Tierra instalación","values":["done"]},{"name":"Encoder 1","values":["pending"]},{"name":"FW cargado","values":["done"]},{"name":"HMI cargado","values":["done"]},{"name":"Agua primario","values":["pending"]},{"name":"Aislamiento cables GSC","values":["done"]},{"name":"Alimentación auxiliar 440V","values":["done"]},{"name":"MCB","values":["done"]},{"name":"E-stops","values":["done"]},{"name":"Fibra RAB","values":["done"]},{"name":"Firewall instalado","values":["done"]},{"name":"Comms. TCP con IAS","values":["done"]},{"name":"Primera energización GSC","values":["done"]},{"name":"Primera energización MSC","values":["pending"]},{"name":"PT100 Motor winding + bearing","values":["done"]},{"name":"Safeties temperaturas motor","values":["pending"]},{"name":"Digitales con IAS","values":["done"]},{"name":"Señales con PMS","values":["done"]}]},"MULTIDRIVE":{"pct":0.5,"columns":["Estado"],"tasks":[{"name":"WCU llenado","values":["done"]},{"name":"Sentido rotación bombas","values":["done"]},{"name":"Tierra instalación","values":["done"]},{"name":"Agua primario","values":["pending"]},{"name":"FW cargado","values":["done"]},{"name":"HMI cargado","values":["done"]},{"name":"Aislamiento cables GSC","values":["done"]},{"name":"Alimentación auxiliar 440V","values":["done"]},{"name":"Medida Vrst","values":["done"]},{"name":"Medida Vshore","values":["pending"]},{"name":"MCB","values":["done"]},{"name":"E-stops","values":["pending"]},{"name":"Bender configurado","values":["done"]},{"name":"Weidmuller - 10.100.1.196","values":["done"]},{"name":"Fibra RAB","values":["pending"]},{"name":"Comms. TCP con EMS","values":["done"]},{"name":"Firewall","values":["pending"]},{"name":"Tª trafo cabecera (1 devanado)","values":["done"]},{"name":"Tª trafo shore (1 devanado)","values":["done"]},{"name":"Comms. TCP con IAS","values":["done"]},{"name":"Digitales con IAS","values":["done"]},{"name":"Digitales/Analogicas con EMS","values":["done"]},{"name":"Primera energización GSC1","values":["pending"]},{"name":"Primera energización GSC2","values":["pending"]},{"name":"Primera energización DCDC","values":["pending"]},{"name":"Safeties por Tª trafos","values":["pending"]}]}}},"AUTOMATION":{"label":"Automatización","icon":"🤖","subgroups":{"PMS":{"pct":0.3,"columns":["Estado"],"tasks":[{"name":"Alimentación control","values":["done"]},{"name":"SW cargado","values":["done"]},{"name":"HMI cargado","values":["done"]},{"name":"Canales CAN","values":["done"]},{"name":"Anillo ethernet","values":["done"]},{"name":"Comms. RTU IAS 1","values":["done"]},{"name":"Comms. RTU IAS 2","values":["pending"]},{"name":"Comms. RTU con EMS","values":["done"]},{"name":"24Vdc en ESB","values":["done"]},{"name":"Señales con MSB","values":["done"]},{"name":"Señales con Gens","values":["pending"]},{"name":"Señales ESB","values":["pending"]},{"name":"Señales con drives MP","values":["done"]},{"name":"Señales con drives proa","values":["done"]},{"name":"Señales con EMS","values":["pending"]},{"name":"Maniobras Gen 1","values":["done"]},{"name":"Maniobras Gen 2","values":["done"]},{"name":"Maniobras Gen 3","values":["done"]},{"name":"Maniobras BTB","values":["done"]}]},"EMS":{"pct":0.4,"columns":["Estado"],"tasks":[{"name":"SW cargado","values":["done"]},{"name":"230Vac emergencia","values":["done"]},{"name":"24Vdc","values":["done"]},{"name":"230Vac heater & light","values":["done"]},{"name":"HMI cargado","values":["done"]},{"name":"E-stop","values":["pending"]},{"name":"Comms. RTU con PMS","values":["done"]},{"name":"Comms. TCP con BMS","values":["pending"]},{"name":"Comms. RTU con IAS","values":["done"]},{"name":"Comms. TCP con Mdrive (MOXA)","values":["done"]},{"name":"Ajuste fuentes de alimentación","values":["done"]},{"name":"Fibra RAB","values":["pending"]},{"name":"Señales con FC","values":["done"]},{"name":"Señales con IAS","values":["pending"]},{"name":"Señales con PMS","values":["done"]},{"name":"Señales con DP","values":["pending"]},{"name":"Señales con RAB","values":["pending"]},{"name":"Pruebas funcionales","values":["pending"]}]},"SAFETY SYSTEM PS":{"pct":0.7,"columns":["PS"],"tasks":[{"name":"Relé K05 y cableado","values":["pending"]},{"name":"HMI","values":["done"]},{"name":"230Vac emergencia","values":["done"]},{"name":"24Vdc principal","values":["done"]},{"name":"230Vac heater & light","values":["done"]},{"name":"SW cargado","values":["done"]},{"name":"PT100 motor","values":["done"]},{"name":"Señales con drive","values":["done"]},{"name":"Señales con IAS","values":["done"]},{"name":"Shutdown WB","values":["done"]},{"name":"Botón override (NC)","values":["done"]},{"name":"Comms. RTU PCS/IAS","values":["na"]},{"name":"Reset de IAS","values":["pending"]},{"name":"Water leakage","values":["done"]},{"name":"Safeties","values":["pending"]}]},"SAFETY SYSTEM SB":{"pct":0.7,"columns":["SB"],"tasks":[{"name":"Relé K05 y cableado","values":["pending"]},{"name":"HMI","values":["done"]},{"name":"230Vac emergencia","values":["done"]},{"name":"24Vdc principal","values":["done"]},{"name":"230Vac heater & light","values":["done"]},{"name":"SW cargado","values":["done"]},{"name":"PT100 motor","values":["done"]},{"name":"Señales con drive","values":["done"]},{"name":"Señales con IAS","values":["done"]},{"name":"Shutdown WB","values":["done"]},{"name":"Botón override (NC)","values":["done"]},{"name":"Comms. RTU PCS/IAS","values":["na"]},{"name":"Reset de IAS","values":["pending"]},{"name":"Water leakage","values":["done"]},{"name":"Safeties","values":["pending"]}]}}},"MOTORS":{"label":"Motores","icon":"🔧","subgroups":{"MAIN PROP PS":{"pct":0.7,"columns":["PS"],"tasks":[{"name":"Datasheet","values":["done"]},{"name":"Aislamiento windings","values":["done"]},{"name":"Aislamiento cables","values":["done"]},{"name":"Alineación","values":["pending"]},{"name":"Faseado y pantallas","values":["done"]},{"name":"Tierra instalación","values":["pending"]},{"name":"PT100 winding","values":["done"]},{"name":"PT100 bearing DE & NDE","values":["done"]},{"name":"PT100 water IN & OUT","values":["na"]},{"name":"Encoder 1","values":["done"]},{"name":"Heaters - 225Vac MSB","values":["done"]},{"name":"Tuberías cooling","values":["done"]},{"name":"Water leakage 24Vdc","values":["done"]},{"name":"Water leakage contacto","values":["done"]},{"name":"Primera energización","values":["pending"]}]},"MAIN PROP SB":{"pct":0.7,"columns":["SB"],"tasks":[{"name":"Datasheet","values":["done"]},{"name":"Aislamiento windings","values":["done"]},{"name":"Aislamiento cables","values":["done"]},{"name":"Alineación","values":["pending"]},{"name":"Faseado y pantallas","values":["done"]},{"name":"Tierra instalación","values":["done"]},{"name":"PT100 winding","values":["done"]},{"name":"PT100 bearing DE & NDE","values":["done"]},{"name":"PT100 water IN & OUT","values":["na"]},{"name":"Encoder 1","values":["done"]},{"name":"Heaters - 225Vac MSB","values":["done"]},{"name":"Tuberías cooling","values":["done"]},{"name":"Water leakage 24Vdc","values":["done"]},{"name":"Water leakage contacto","values":["done"]},{"name":"Primera energización","values":["pending"]}]},"BOW":{"pct":0.8,"columns":["Estado"],"tasks":[{"name":"Circuito eq. y datasheet","values":["done"]},{"name":"Aislamiento cables","values":["done"]},{"name":"Aislamiento windings","values":["done"]},{"name":"Faseado y pantallas","values":["done"]},{"name":"Alineación","values":["pending"]},{"name":"Tierra instalación","values":["done"]},{"name":"Desacoplado","values":["done"]},{"name":"PT100","values":["done"]},{"name":"Encoder 1","values":["done"]},{"name":"Heaters - 225Vac MSB","values":["done"]},{"name":"Tuberías cooling","values":["done"]},{"name":"Primera energización","values":["done"]},{"name":"Water leakage a IAS","values":["pending"]}]},"SWING-UP THR.":{"pct":0.5,"columns":["Estado"],"tasks":[{"name":"Circuito eq. y datasheet","values":["done"]},{"name":"Aislamiento cables","values":["done"]},{"name":"Aislamiento windings","values":["done"]},{"name":"Faseado y pantallas","values":["done"]},{"name":"Alineación","values":["pending"]},{"name":"Tierra instalación","values":["done"]},{"name":"PT100","values":["done"]},{"name":"Encoder 1","values":["done"]},{"name":"Heaters - 225Vac MSB","values":["done"]},{"name":"Tuberías cooling","values":["done"]},{"name":"Primera energización","values":["pending"]},{"name":"Water leakage a IAS","values":["pending"]}]}}},"TRAFOS":{"label":"Transformadores","icon":"🔆","subgroups":{"HOTEL PS":{"pct":0.8,"columns":["PS"],"tasks":[{"name":"Aislamiento cables","values":["done"]},{"name":"Aislamiento windings","values":["done"]},{"name":"PT100 al IAS","values":["done"]},{"name":"220Vac heaters - MSB","values":["done"]},{"name":"Primera energización","values":["done"]},{"name":"Alarmas H & HH en IAS","values":["pending"]}]},"HOTEL SB":{"pct":0.8,"columns":["SB"],"tasks":[{"name":"Aislamiento cables","values":["done"]},{"name":"Aislamiento windings","values":["done"]},{"name":"PT100 al IAS","values":["done"]},{"name":"220Vac heaters - MSB","values":["done"]},{"name":"Primera energización","values":["done"]},{"name":"Alarmas H & HH en IAS","values":["pending"]}]},"MULTIDRIVE":{"pct":0.6,"columns":["Estado"],"tasks":[{"name":"Aislamiento cables","values":["done"]},{"name":"Aislamiento windings","values":["done"]},{"name":"PT100","values":["done"]},{"name":"220Vac heaters desde MSB","values":["done"]},{"name":"Primera energización","values":["pending"]}]},"SHORE":{"pct":0.4,"columns":["Estado"],"tasks":[{"name":"Aislamiento cables","values":["pending"]},{"name":"Aislamiento windings","values":["pending"]},{"name":"PT100","values":["done"]},{"name":"220Vac heaters","values":["pending"]},{"name":"Links 1 a 1","values":["pending"]},{"name":"Primera energización","values":["pending"]}]}}}};
+
+// ═══════════════════════════════════════════════════════
+//  LOGIN
+// ═══════════════════════════════════════════════════════
+document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('loginUser').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function doLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const found = USERS[user];
+  if (found && found.password === pass) {
+    session = { username: user, role: found.role };
+    document.getElementById('loginOverlay').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    initApp();
+  } else {
+    document.getElementById('loginError').textContent = 'Usuario o contraseña incorrectos.';
   }
-  return n? (acc/n) : ((area.pct)||0);
 }
 
-function dotColor(p){
-  if(p>=75) return 'var(--g)';
-  if(p>=40) return 'var(--y)';
-  return 'var(--r)';
+function doLogout() {
+  session = null; dirty = false; DATA = null; fileSHA = null;
+  currentGroup = null; currentSubgroup = null;
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('loginOverlay').classList.remove('hidden');
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginError').textContent = '';
 }
 
-function lerp(a,b,t){ return a + (b-a)*t; }
-function hexToRgb(h){
-  const m=(h||'').trim().replace('#','');
-  const hex = (m.length===3) ? m.split('').map(ch=>ch+ch).join('') : m;
-  const n=parseInt(hex,16);
-  return {r:(n>>16)&255, g:(n>>8)&255, b:n&255};
-}
-function rgbToCss(r,g,b){ return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`; }
-function dotFromPct(p){
-  const c0=getComputedStyle(document.documentElement).getPropertyValue('--prog0').trim() || '#9f1239';
-  const c1=getComputedStyle(document.documentElement).getPropertyValue('--prog1').trim() || '#15803d';
-  const t=Math.max(0, Math.min(1, (p||0)/100));
-  const a=hexToRgb(c0), b=hexToRgb(c1);
-  return rgbToCss(lerp(a.r,b.r,t), lerp(a.g,b.g,t), lerp(a.b,b.b,t));
+// ═══════════════════════════════════════════════════════
+//  GITHUB CONFIG
+// ═══════════════════════════════════════════════════════
+function loadGhConfig() {
+  try {
+    const s = localStorage.getItem('c806_gh_config');
+    return s ? JSON.parse(s) : { token: '', owner: '', repo: '', branch: 'main', path: 'data.json' };
+  } catch { return { token: '', owner: '', repo: '', branch: 'main', path: 'data.json' }; }
 }
 
-function clampPct(p){
-  if(p===null || p===undefined || isNaN(p)) return 0;
-  return Math.max(0, Math.min(100, p));
-}
-function badge(s){
-  if(!s) return '';
-  const s2=(''+s).replace(/\s+/g,'');
-  if(s2==='X') return '<span class="badge x">OK</span>';
-  if(s2==='N.A.'||s2==='N.A') return '<span class="badge na">N/A</span>';
-  return '<span class="badge">'+s+'</span>';
-}
-function isOk(st){
-  return (''+(st||'')).replace(/\s+/g,'')==='X';
-}
-function isOkPSSB(ps,sb){
-  return isOk(ps) && isOk(sb);
+function openConfig() {
+  const m = document.getElementById('configModal');
+  m.classList.remove('hidden');
+  document.getElementById('cfgToken').value  = ghConfig.token  || '';
+  document.getElementById('cfgOwner').value  = ghConfig.owner  || '';
+  document.getElementById('cfgRepo').value   = ghConfig.repo   || '';
+  document.getElementById('cfgBranch').value = ghConfig.branch || 'main';
+  document.getElementById('cfgPath').value   = ghConfig.path   || 'data.json';
 }
 
-function render(){
-  const q='';
-  const onlyPending = (document.getElementById('onlyPendingBtn')?.getAttribute('aria-pressed') === 'true');
-  const kpis=document.getElementById('kpis');
-  const grid=document.getElementById('grid');
-  kpis.innerHTML='';
-  grid.innerHTML='';
+function closeConfig() { document.getElementById('configModal').classList.add('hidden'); }
 
-  const areasOrder=['MSB 440','PMS','DRIVES','MOTORS','SAFETY SYSTEM','EMS','TRAFOS','BATTERIES','REMOTE ACCESS BOX'];
+function saveConfig() {
+  ghConfig = {
+    token:  document.getElementById('cfgToken').value.trim(),
+    owner:  document.getElementById('cfgOwner').value.trim(),
+    repo:   document.getElementById('cfgRepo').value.trim(),
+    branch: document.getElementById('cfgBranch').value.trim() || 'main',
+    path:   document.getElementById('cfgPath').value.trim()   || 'data.json'
+  };
+  localStorage.setItem('c806_gh_config', JSON.stringify(ghConfig));
+  closeConfig();
+  showToast('Configuración guardada', 'ok');
+  // Try to load data from GitHub now
+  loadFromGitHub();
+}
 
-  for(const areaName of areasOrder){
-    const area=model.areas[areaName];
-    if(!area) continue;
+// ═══════════════════════════════════════════════════════
+//  GITHUB API  — read & write
+// ═══════════════════════════════════════════════════════
+function ghReady() {
+  return ghConfig.token && ghConfig.owner && ghConfig.repo;
+}
 
-    const pct = (area && area.type==='group') ? groupPct(area) : (area.pct ?? 0);
-    const k=document.createElement('div');
-    k.className='kpi';
-    k.innerHTML = '<div class="t">'+areaName+'</div>'+
-      '<div class="v"><div class="pct">'+Math.round(pct)+'%</div>'+
-      '<div class="t"><span class="dot" style="background:'+dotColor(pct)+'"></span></div></div>';
-    try{ const d=k.querySelector('.dot'); if(d){ d.style.background = dotFromPct(pct); } }catch(e){}
-    kpis.appendChild(k);
-
-    const card=document.createElement('div');
-    card.className='card';
-
-    const summary=document.createElement('div');
-    summary.className='summary';
-    summary.innerHTML = '<h2>'+areaName+'</h2>'+
-      '<span class="badgePct" title="Click para desplegar/plegar">'+Math.round(pct)+'% ▾</span>';
-    card.appendChild(summary);
-
-    const bar=document.createElement('div');
-    bar.className='bar';
-    const fill=document.createElement('div');
-    fill.className='fill';
-    fill.style.width = clampPct(pct) + '%';
-    bar.appendChild(fill);
-    card.appendChild(bar);
-
-    const details=document.createElement('div');
-    details.className='details';
-    details.hidden=true;
-    card.appendChild(details);
-
-    const pctEl=summary.querySelector('.badgePct');
-    pctEl.addEventListener('click', (ev)=>{
-      ev.stopPropagation();
-      details.hidden = !details.hidden;
-      pctEl.textContent = Math.round(pct) + '% ' + (details.hidden ? '▾' : '▴');
+async function loadFromGitHub() {
+  if (!ghReady()) {
+    DATA = JSON.parse(JSON.stringify(FALLBACK_DATA));
+    renderAll();
+    return;
+  }
+  setSaveStatus('Cargando…', 'saving');
+  try {
+    const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${ghConfig.path}?ref=${ghConfig.branch}`;
+    const res = await fetch(url, {
+      headers: { Authorization: `token ${ghConfig.token}`, Accept: 'application/vnd.github.v3+json' }
     });
+    if (!res.ok) throw new Error(`GitHub ${res.status}`);
+    const json = await res.json();
+    fileSHA = json.sha;
+    DATA = JSON.parse(atob(json.content.replace(/\n/g, '')));
+    setSaveStatus('Sincronizado ✓', 'ok');
+    renderAll();
+  } catch (e) {
+    setSaveStatus('Sin conexión a GitHub', 'err');
+    DATA = JSON.parse(JSON.stringify(FALLBACK_DATA));
+    renderAll();
+    showToast('No se pudo cargar de GitHub — usando datos locales', 'err');
+  }
+}
 
-    function renderPSSB(items, pct_ps, pct_sb){
-      const wrap=document.createElement('div');
-      wrap.className='pssb';
+async function saveToGitHub() {
+  if (!ghReady()) { showToast('Configura GitHub primero (⚙)', 'err'); return; }
+  setSaveStatus('Guardando…', 'saving');
+  document.getElementById('saveBtn').disabled = true;
+  try {
+    DATA.meta.lastUpdated = new Date().toISOString();
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(DATA, null, 2))));
+    const body = {
+      message: `chore: update commissioning data [${new Date().toLocaleString('es-ES')}]`,
+      content,
+      branch: ghConfig.branch
+    };
+    if (fileSHA) body.sha = fileSHA;
 
-      const ps=document.createElement('div');
-      ps.className='sub';
-      ps.innerHTML = '<h3><span>PS (Portside)</span><span class="badgePct">'+(pct_ps??'')+'%</span></h3>';
-      const sb=document.createElement('div');
-      sb.className='sub';
-      sb.innerHTML = '<h3><span>SB (Starboard)</span><span class="badgePct">'+(pct_sb??'')+'%</span></h3>';
+    const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${ghConfig.path}`;
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        Authorization: `token ${ghConfig.token}`,
+        Accept: 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) { const e = await res.json(); throw new Error(e.message); }
+    const json = await res.json();
+    fileSHA = json.content.sha;
+    dirty = false;
+    document.getElementById('saveBtn').classList.add('hidden');
+    setSaveStatus('Guardado ✓', 'ok');
+    showToast('Cambios guardados en GitHub ✓', 'ok');
+  } catch (e) {
+    setSaveStatus('Error al guardar', 'err');
+    showToast('Error: ' + e.message, 'err');
+  } finally {
+    document.getElementById('saveBtn').disabled = false;
+  }
+}
 
-      const lps=document.createElement('div'); lps.className='list';
-      const lsb=document.createElement('div'); lsb.className='list';
+function setSaveStatus(text, cls) {
+  const el = document.getElementById('saveStatus');
+  el.textContent = text;
+  el.className = 'save-status ' + cls;
+}
 
-      const filtered=(items||[]).filter(it=>{
-        const matchQ = (!q || (it.label||'').toLowerCase().includes(q) || (it.ps||'').toLowerCase().includes(q) || (it.sb||'').toLowerCase().includes(q));
-        const matchP = (!onlyPending || !isOkPSSB(it.ps,it.sb));
-        return matchQ && matchP;
-      });
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+function initApp() {
+  // Role UI
+  const badge = document.getElementById('roleBadge');
+  badge.textContent = session.role === 'admin' ? '👤 Admin' : '👁 Viewer';
+  badge.className = 'h-badge ' + session.role;
 
-      for(const it of filtered.slice(0, 60)){
-        const r1=document.createElement('div'); r1.className='item';
-        r1.innerHTML='<div class="k">'+it.label+'</div><div>'+badge(it.ps)+'</div>';
-        lps.appendChild(r1);
-        const r2=document.createElement('div'); r2.className='item';
-        r2.innerHTML='<div class="k">'+it.label+'</div><div>'+badge(it.sb)+'</div>';
-        lsb.appendChild(r2);
-      }
-      if(!lps.childNodes.length){
-        lps.innerHTML='<div class="item"><div class="k">(Sin coincidencias)</div><div></div></div>';
-        lsb.innerHTML='<div class="item"><div class="k">(Sin coincidencias)</div><div></div></div>';
-      }
+  if (session.role === 'admin') {
+    document.getElementById('configBtn').classList.remove('hidden');
+  }
 
-      ps.appendChild(lps); sb.appendChild(lsb);
-      wrap.appendChild(ps); wrap.appendChild(sb);
-      return wrap;
-    }
+  document.getElementById('hProject').textContent = DATA ? DATA.meta?.project || '' : '';
+  loadFromGitHub();
+}
 
-    if(area.type==='pssb'){
-      details.appendChild(renderPSSB(area.items, area.pct_ps, area.pct_sb));
-      grid.appendChild(card);
-      continue;
-    }
+function renderAll() {
+  document.getElementById('hProject').textContent = DATA.meta?.project || '';
+  updateGlobalBar();
+  renderSummary();
+  if (currentGroup) {
+    showDetail(currentGroup, false);
+    if (currentSubgroup) renderTasks(currentGroup, currentSubgroup);
+  }
+}
 
-    if(area.type==='single'){
-      const list=document.createElement('div');
-      list.className='list';
-      const filtered=(area.items||[]).filter(it=>{
-        const matchQ = (!q || (it.label||'').toLowerCase().includes(q) || (it.st||'').toLowerCase().includes(q));
-        const matchP = (!onlyPending || !isOk(it.st));
-        return matchQ && matchP;
-      });
-      for(const it of filtered.slice(0, 80)){
-        const row=document.createElement('div');
-        row.className='item';
-        row.innerHTML='<div class="k">'+it.label+'</div><div>'+badge(it.st)+'</div>';
-        list.appendChild(row);
-      }
-      if(!list.childNodes.length) list.innerHTML='<div class="item"><div class="k">(Sin coincidencias)</div><div></div></div>';
-      details.appendChild(list);
-    }
+// ═══════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════
+function pctColor(p) {
+  if (p >= 0.75) return 'var(--green)';
+  if (p >= 0.4)  return 'var(--amber)';
+  return 'var(--red)';
+}
 
-    if(area.type==='group'){
-      const groups=area.groups||{};
-      const gKeys=Object.keys(groups);
+function calcGroupPct(groupKey) {
+  const subs = Object.values(DATA.groups[groupKey].subgroups);
+  return subs.reduce((a, s) => a + s.pct, 0) / subs.length;
+}
 
-      const tabs=document.createElement('div');
-      tabs.className='tabs';
-      details.appendChild(tabs);
+function calcSubPct(sub) {
+  const tasks = sub.tasks;
+  const eligible = tasks.filter(t => t.values[0] !== 'na');
+  if (!eligible.length) return 0;
+  return eligible.filter(t => t.values[0] === 'done').length / eligible.length;
+}
 
-      const body=document.createElement('div');
-      details.appendChild(body);
+function updateSubPct(groupKey, subKey) {
+  const sub = DATA.groups[groupKey].subgroups[subKey];
+  sub.pct = Math.round(calcSubPct(sub) * 100) / 100;
+}
 
-      function showGroup(key){
-        [...tabs.children].forEach(el=>el.classList.remove('active'));
-        const btn=[...tabs.children].find(b=>b.dataset.key===key);
-        if(btn) btn.classList.add('active');
+function updateGlobalBar() {
+  const keys = Object.keys(DATA.groups);
+  const avg = keys.reduce((a, k) => a + calcGroupPct(k), 0) / keys.length;
+  document.getElementById('hGlobalFill').style.width = (avg * 100) + '%';
+  document.getElementById('hGlobalPct').textContent = Math.round(avg * 100) + '%';
+}
 
-        body.innerHTML='';
-        const g=groups[key];
-        if(!g) return;
+function markDirty() {
+  if (!dirty) {
+    dirty = true;
+    document.getElementById('saveBtn').classList.remove('hidden');
+    setSaveStatus('Cambios sin guardar', 'err');
+  }
+}
 
-        if(g.type==='pssb'){
-          body.appendChild(renderPSSB(g.items, g.pct_ps, g.pct_sb));
-        } else {
-          const list=document.createElement('div');
-          list.className='list';
-          const filtered=(g.items||[]).filter(it=>{
-            const matchQ = (!q || (it.label||'').toLowerCase().includes(q) || (it.st||'').toLowerCase().includes(q));
-            const matchP = (!onlyPending || !isOk(it.st));
-            return matchQ && matchP;
-          });
-          for(const it of filtered.slice(0, 80)){
-            const row=document.createElement('div');
-            row.className='item';
-            row.innerHTML='<div class="k">'+it.label+'</div><div>'+badge(it.st)+'</div>';
-            list.appendChild(row);
-          }
-          if(!list.childNodes.length) list.innerHTML='<div class="item"><div class="k">(Sin coincidencias)</div><div></div></div>';
-          body.appendChild(list);
-        }
-      }
-
-      gKeys.forEach((k,idx)=>{
-        const b=document.createElement('div');
-        b.className='tab'+(idx===0?' active':'');
-        const g=groups[k];
-        let gp=null;
-        if(g && g.type==='pssb'){ gp = (Number(g.pct_ps)+Number(g.pct_sb))/2; }
-        else if(g && typeof g.pct==='number'){ gp = g.pct; }
-        b.textContent = (gp===null || isNaN(gp)) ? k : (k+' · '+Math.round(gp)+'%');
-        b.dataset.key=k;
-        b.addEventListener('click', ()=>showGroup(k));
-        tabs.appendChild(b);
-      });
-      if(gKeys.length) showGroup(gKeys[0]);
-    }
-
+// ═══════════════════════════════════════════════════════
+//  SUMMARY
+// ═══════════════════════════════════════════════════════
+function renderSummary() {
+  const grid = document.getElementById('summaryGrid');
+  grid.innerHTML = '';
+  Object.entries(DATA.groups).forEach(([key, group]) => {
+    const avg = calcGroupPct(key);
+    const color = pctColor(avg);
+    const card = document.createElement('div');
+    card.className = 's-card';
+    card.innerHTML = `
+      <div class="s-card-tag">${group.icon} ${key}</div>
+      <div class="s-card-name">${group.label}</div>
+      <div class="s-pct-row">
+        <div class="s-bar-wrap"><div class="s-bar-fill" style="width:${avg*100}%;background:${color}"></div></div>
+        <span class="s-pct-num" style="color:${color}">${Math.round(avg*100)}%</span>
+      </div>`;
+    card.addEventListener('click', () => showDetail(key));
     grid.appendChild(card);
-  }
-}
-
-render();
-const btn=document.getElementById('onlyPendingBtn');
-if(btn){
-  btn.addEventListener('click', ()=>{
-    const on = btn.getAttribute('aria-pressed') === 'true';
-    btn.setAttribute('aria-pressed', String(!on));
-    render();
   });
 }
 
+// ═══════════════════════════════════════════════════════
+//  DETAIL
+// ═══════════════════════════════════════════════════════
+function showDetail(groupKey, renderTasksFirst = true) {
+  currentGroup = groupKey;
+  const group = DATA.groups[groupKey];
+  document.getElementById('summaryView').classList.add('hidden');
+  document.getElementById('detailView').classList.remove('hidden');
+  document.getElementById('detailTitle').textContent = group.icon + ' ' + group.label;
 
-// Add visual PEND for tasks without explicit status
-function applyPendDefaults(){
-  document.querySelectorAll('.item').forEach(row=>{
-    const k=row.querySelector('.k');
-    if(!k) return;
-    const label=(k.textContent||'').trim();
-    if(!label) return;
+  const tabsEl = document.getElementById('subTabs');
+  tabsEl.innerHTML = '';
+  const subkeys = Object.keys(group.subgroups);
 
-    // Ensure row has at least 2 cells
-    if(row.children.length<2){
-      const cell=document.createElement('div');
-      row.appendChild(cell);
-    }
-
-    // Prefer status container: the last child. If last child is actually the label cell (rare), create a new status cell.
-    let last=row.children[row.children.length-1];
-    if(last && last.querySelector && last.querySelector('.k')){
-      const cell=document.createElement('div');
-      row.appendChild(cell);
-      last=cell;
-    }
-
-    // If last contains some plain text (e.g., 'X' or empty) but no badge, convert it to a badge.
-    let badge=last.querySelector && last.querySelector('.badge');
-    if(!badge){
-      const raw=(last.textContent||'').trim();
-      last.innerHTML='';
-      badge=document.createElement('span');
-      badge.className='badge';
-      badge.textContent=raw;
-      last.appendChild(badge);
-    }
-
-    const txt=(badge.textContent||'').trim();
-    const up=txt.toUpperCase();
-    if(up==='OK' || up==='X'){
-      badge.textContent='OK';
-      badge.classList.remove('todo','na');
-      badge.classList.add('x');
-      return;
-    }
-    if(up==='N/A' || up==='N.A.' || up==='N.A'){
-      badge.textContent='N/A';
-      badge.classList.remove('todo','x');
-      badge.classList.add('na');
-      return;
-    }
-    if(up==='PEND'){
-      badge.classList.remove('x','na');
-      badge.classList.add('todo');
-      return;
-    }
-
-    // Anything else (including empty) => PEND
-    badge.textContent='PEND';
-    badge.classList.remove('x','na');
-    badge.classList.add('todo');
+  subkeys.forEach((sk, i) => {
+    const sub = group.subgroups[sk];
+    const pct = Math.round(sub.pct * 100);
+    const tab = document.createElement('button');
+    tab.className = 'sub-tab' + (i === 0 ? ' active' : '');
+    tab.innerHTML = `${sk} <span class="tpct">${pct}%</span>`;
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      renderTasks(groupKey, sk);
+    });
+    tabsEl.appendChild(tab);
   });
-}
-const __render=window.render;
-if(typeof __render==='function'){
-  window.render=function(){
-    __render();
-    applyPendDefaults();
+
+  if (renderTasksFirst) {
+    currentSubgroup = subkeys[0];
+    renderTasks(groupKey, subkeys[0]);
   }
 }
-window.addEventListener('load', ()=>{ try{applyPendDefaults();}catch(e){} });
 
+function showSummary() {
+  document.getElementById('summaryView').classList.remove('hidden');
+  document.getElementById('detailView').classList.add('hidden');
+  currentGroup = null;
+  currentSubgroup = null;
+  renderSummary();
+  updateGlobalBar();
+}
 
-// Extra enforcement for subgroups (post-DOM update)
-function enforcePendHard(){
-  document.querySelectorAll('.item').forEach(row=>{
-    const k=row.querySelector('.k');
-    if(!k) return;
-    const label=(k.textContent||'').trim();
-    if(!label) return;
+// ═══════════════════════════════════════════════════════
+//  TASK TABLE
+// ═══════════════════════════════════════════════════════
+function renderTasks(groupKey, subKey) {
+  currentSubgroup = subKey;
+  const sub = DATA.groups[groupKey].subgroups[subKey];
+  const pct = sub.pct;
+  const color = pctColor(pct);
+  const isAdmin = session.role === 'admin';
 
-    // Ensure 2 cells
-    if(row.children.length<2){
-      row.appendChild(document.createElement('div'));
-    }
-    let last=row.children[row.children.length-1];
-    if(last && last.querySelector && last.querySelector('.k')){
-      row.appendChild(document.createElement('div'));
-      last=row.children[row.children.length-1];
-    }
+  document.getElementById('progFill').style.width = (pct * 100) + '%';
+  document.getElementById('progFill').style.background = color;
+  document.getElementById('progPct').textContent = Math.round(pct * 100) + '%';
+  document.getElementById('progPct').style.color = color;
 
-    if(!last.querySelector('.badge')){
-      last.innerHTML='<span class="badge todo">PEND</span>';
+  const cols = sub.columns;
+  const colTemplate = `1fr ${cols.map(() => '72px').join(' ')}`;
+
+  let html = `
+    <div class="t-head" style="grid-template-columns:${colTemplate}">
+      <div class="th">Tarea</div>
+      ${cols.map(c => `<div class="th">${c}</div>`).join('')}
+    </div>`;
+
+  sub.tasks.forEach((task, ti) => {
+    const cells = task.values.map((v, vi) => {
+      if (isAdmin) {
+        return `<div class="t-cell">
+          <button class="status-btn editable" data-v="${v}" data-ti="${ti}" data-vi="${vi}"
+            title="Clic para cambiar: pendiente → completado → N/A"
+            onclick="cycleStatus('${groupKey}','${subKey}',${ti},${vi},this)">
+            <span class="dot dot-${v}"></span>
+          </button>
+        </div>`;
+      } else {
+        return `<div class="t-cell">
+          <div class="status-btn" data-v="${v}"><span class="dot dot-${v}"></span></div>
+        </div>`;
+      }
+    }).join('');
+    html += `<div class="t-row" style="grid-template-columns:${colTemplate}">
+      <div class="t-name">${task.name}</div>${cells}
+    </div>`;
+  });
+
+  html += `<div class="t-legend">
+    <span><span class="dot dot-done"></span> Completado</span>
+    <span><span class="dot dot-pending"></span> Pendiente</span>
+    <span><span class="dot dot-na"></span> N/A</span>
+    ${isAdmin ? '<span style="margin-left:auto;color:var(--accent);font-size:10px">✏ Clic en el indicador para cambiar estado</span>' : ''}
+  </div>`;
+
+  document.getElementById('taskTable').innerHTML = html;
+
+  // Update tab badge
+  document.querySelectorAll('.sub-tab').forEach(tab => {
+    if (tab.textContent.startsWith(subKey)) {
+      tab.querySelector('.tpct').textContent = Math.round(pct * 100) + '%';
     }
   });
 }
 
-// Wrap original render and also hook tab clicks
-const __applyPendDefaults = window.applyPendDefaults;
-window.applyPendDefaults = function(){
-  if(typeof __applyPendDefaults==='function') __applyPendDefaults();
-  enforcePendHard();
+// ═══════════════════════════════════════════════════════
+//  STATUS CYCLE  (Admin only)
+// ═══════════════════════════════════════════════════════
+const STATUS_CYCLE = { pending: 'done', done: 'na', na: 'pending' };
+
+function cycleStatus(groupKey, subKey, ti, vi, btn) {
+  const task = DATA.groups[groupKey].subgroups[subKey].tasks[ti];
+  const cur = task.values[vi];
+  const next = STATUS_CYCLE[cur];
+  task.values[vi] = next;
+
+  // Update button appearance
+  btn.setAttribute('data-v', next);
+  btn.querySelector('.dot').className = 'dot dot-' + next;
+
+  // Recalculate pct for this subgroup
+  updateSubPct(groupKey, subKey);
+
+  // Update progress strip
+  const pct = DATA.groups[groupKey].subgroups[subKey].pct;
+  const color = pctColor(pct);
+  document.getElementById('progFill').style.width = (pct * 100) + '%';
+  document.getElementById('progFill').style.background = color;
+  document.getElementById('progPct').textContent = Math.round(pct * 100) + '%';
+  document.getElementById('progPct').style.color = color;
+
+  // Update tab badge
+  document.querySelectorAll('.sub-tab').forEach(tab => {
+    if (tab.textContent.replace(/\s*\d+%/, '').trim() === subKey) {
+      tab.querySelector('.tpct').textContent = Math.round(pct * 100) + '%';
+    }
+  });
+
+  updateGlobalBar();
+  markDirty();
 }
 
-document.addEventListener('click', (ev)=>{
-  if(ev.target.closest('.tab')){
-    // after tab switch, DOM updates; enforce shortly after
-    setTimeout(()=>{ try{applyPendDefaults();}catch(e){} }, 30);
-    setTimeout(()=>{ try{applyPendDefaults();}catch(e){} }, 150);
-  }
-});
-
-window.addEventListener('load', ()=>{
-  setTimeout(()=>{ try{applyPendDefaults();}catch(e){} }, 30);
-  setTimeout(()=>{ try{applyPendDefaults();}catch(e){} }, 150);
-});
-
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3500);
+}
 </script>
 </body>
 </html>

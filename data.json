@@ -1,0 +1,435 @@
+{
+  "meta": {
+    "project": "C806",
+    "title": "C806 Commissioning",
+    "lastUpdated": "2026-06-27T00:00:00Z"
+  },
+  "groups": {
+    "SWITCHBOARDS": {
+      "label": "Cuadros Eléctricos",
+      "icon": "🔌",
+      "subgroups": {
+        "MAIN SWITCHBOARD 440": {
+          "pct": 0.9,
+          "columns": ["Estado"],
+          "tasks": [
+            { "name": "Emenasa - interconexión cuadros", "values": ["done"] },
+            { "name": "Aislamiento barras", "values": ["done"] },
+            { "name": "Ajuste fuentes de alimentación", "values": ["done"] },
+            { "name": "MTR configurados", "values": ["done"] },
+            { "name": "DEIF configurados", "values": ["done"] },
+            { "name": "Cableado potencia check", "values": ["done"] },
+            { "name": "24Vdc UPS", "values": ["done"] },
+            { "name": "230Vac heaters P5", "values": ["done"] },
+            { "name": "Añadir bornas resis + cableado", "values": ["done"] },
+            { "name": "Placa características y pegatinas", "values": ["done"] },
+            { "name": "AVR y relé diferencial incluido externo", "values": ["pending"] },
+            { "name": "CAN y ethernet a ESB", "values": ["done"] },
+            { "name": "Primera energización", "values": ["done"] },
+            { "name": "Protecciones DEIF", "values": ["done"] },
+            { "name": "Protecciones ABB", "values": ["done"] },
+            { "name": "Digitales con IAS", "values": ["done"] },
+            { "name": "Interfaces engines", "values": ["pending"] },
+            { "name": "Instalar conversor fibra a TCP", "values": ["done"] },
+            { "name": "Fibra a RAB", "values": ["pending"] },
+            { "name": "24Vdc Generadores ajustada", "values": ["done"] }
+          ]
+        },
+        "REMOTE ACCESS BOX": {
+          "pct": 0.27,
+          "columns": ["Estado"],
+          "tasks": [
+            { "name": "Modificación router", "values": ["pending"] },
+            { "name": "230Vac principal", "values": ["done"] },
+            { "name": "230Vac luces", "values": ["done"] },
+            { "name": "24Vdc UPS", "values": ["done"] },
+            { "name": "Fibra EMS", "values": ["pending"] },
+            { "name": "Fibra PMS - Discrepancia en cuadro, espera ethernet directo", "values": ["pending"] },
+            { "name": "Fibra Multidrive", "values": ["pending"] },
+            { "name": "Fibras MP drives", "values": ["pending"] },
+            { "name": "Fibra Bow drive", "values": ["pending"] },
+            { "name": "Fibra Swing-up drive", "values": ["pending"] },
+            { "name": "Digitales con EMS", "values": ["pending"] }
+          ]
+        }
+      }
+    },
+    "DRIVES": {
+      "label": "Variadores",
+      "icon": "⚙️",
+      "subgroups": {
+        "MAIN PROPULSION PS": {
+          "pct": 0.6,
+          "columns": ["PS"],
+          "tasks": [
+            { "name": "WCU llenado", "values": ["done"] },
+            { "name": "Sentido rotación bombas", "values": ["done"] },
+            { "name": "Tierra instalación", "values": ["done"] },
+            { "name": "Agua primario", "values": ["pending"] },
+            { "name": "Encoder 1", "values": ["done"] },
+            { "name": "FW cargado", "values": ["done"] },
+            { "name": "HMI cargado", "values": ["done"] },
+            { "name": "Aislamiento cables GSC", "values": ["done"] },
+            { "name": "Alimentación auxiliar 440V", "values": ["done"] },
+            { "name": "Digitales con MCB", "values": ["done"] },
+            { "name": "E-stops", "values": ["done"] },
+            { "name": "Fibra RAB", "values": ["pending"] },
+            { "name": "Firewall", "values": ["pending"] },
+            { "name": "Comms. TCP con IAS", "values": ["done"] },
+            { "name": "Primera energización GSC", "values": ["done"] },
+            { "name": "Primera energización MSC", "values": ["pending"] },
+            { "name": "Digitales con IAS", "values": ["done"] },
+            { "name": "Señales con PMS", "values": ["done"] },
+            { "name": "Shutdown WB", "values": ["done"] }
+          ]
+        },
+        "MAIN PROPULSION SB": {
+          "pct": 0.6,
+          "columns": ["SB"],
+          "tasks": [
+            { "name": "WCU llenado", "values": ["done"] },
+            { "name": "Sentido rotación bombas", "values": ["done"] },
+            { "name": "Tierra instalación", "values": ["done"] },
+            { "name": "Agua primario", "values": ["pending"] },
+            { "name": "Encoder 1", "values": ["done"] },
+            { "name": "FW cargado", "values": ["done"] },
+            { "name": "HMI cargado", "values": ["done"] },
+            { "name": "Aislamiento cables GSC", "values": ["done"] },
+            { "name": "Alimentación auxiliar 440V", "values": ["done"] },
+            { "name": "Digitales con MCB", "values": ["done"] },
+            { "name": "E-stops", "values": ["done"] },
+            { "name": "Fibra RAB", "values": ["pending"] },
+            { "name": "Firewall", "values": ["pending"] },
+            { "name": "Comms. TCP con IAS", "values": ["done"] },
+            { "name": "Primera energización GSC", "values": ["done"] },
+            { "name": "Primera energización MSC", "values": ["pending"] },
+            { "name": "Digitales con IAS", "values": ["done"] },
+            { "name": "Señales con PMS", "values": ["done"] },
+            { "name": "Shutdown WB", "values": ["done"] }
+          ]
+        },
+        "BOW": {
+          "pct": 0.4,
+          "columns": ["Estado"],
+          "tasks": [
+            { "name": "WCU llenado", "values": ["done"] },
+            { "name": "Sentido rotación bombas", "values": ["done"] },
+            { "name": "Tierra instalación", "values": ["done"] },
+            { "name": "Encoder 1", "values": ["done"] },
+            { "name": "FW cargado", "values": ["done"] },
+            { "name": "HMI cargado", "values": ["done"] },
+            { "name": "Agua primario", "values": ["pending"] },
+            { "name": "Aislamiento cables GSC", "values": ["done"] },
+            { "name": "Alimentación auxiliar 440V", "values": ["done"] },
+            { "name": "MCB", "values": ["done"] },
+            { "name": "E-stops", "values": ["done"] },
+            { "name": "Fibra RAB", "values": ["done"] },
+            { "name": "Firewall instalado", "values": ["done"] },
+            { "name": "Comms. TCP con IAS", "values": ["done"] },
+            { "name": "Primera energización GSC", "values": ["done"] },
+            { "name": "Primera energización MSC", "values": ["done"] },
+            { "name": "Ajuste IF y VC vacío", "values": ["done"] },
+            { "name": "Ajuste en carga", "values": ["pending"] },
+            { "name": "PT100 Motor winding + bearing", "values": ["done"] },
+            { "name": "Safeties temperaturas motor", "values": ["pending"] },
+            { "name": "Digitales con IAS", "values": ["done"] },
+            { "name": "Señales con PMS", "values": ["done"] }
+          ]
+        },
+        "SWING-UP THR.": {
+          "pct": 0.4,
+          "columns": ["Estado"],
+          "tasks": [
+            { "name": "WCU llenado", "values": ["done"] },
+            { "name": "Sentido rotación bombas", "values": ["done"] },
+            { "name": "Tierra instalación", "values": ["done"] },
+            { "name": "Encoder 1", "values": ["pending"] },
+            { "name": "FW cargado", "values": ["done"] },
+            { "name": "HMI cargado", "values": ["done"] },
+            { "name": "Agua primario", "values": ["pending"] },
+            { "name": "Aislamiento cables GSC", "values": ["done"] },
+            { "name": "Alimentación auxiliar 440V", "values": ["done"] },
+            { "name": "MCB", "values": ["done"] },
+            { "name": "E-stops", "values": ["done"] },
+            { "name": "Fibra RAB", "values": ["done"] },
+            { "name": "Firewall instalado", "values": ["done"] },
+            { "name": "Comms. TCP con IAS", "values": ["done"] },
+            { "name": "Primera energización GSC", "values": ["done"] },
+            { "name": "Primera energización MSC", "values": ["pending"] },
+            { "name": "PT100 Motor winding + bearing", "values": ["done"] },
+            { "name": "Safeties temperaturas motor", "values": ["pending"] },
+            { "name": "Digitales con IAS", "values": ["done"] },
+            { "name": "Señales con PMS", "values": ["done"] }
+          ]
+        },
+        "MULTIDRIVE": {
+          "pct": 0.5,
+          "columns": ["Estado"],
+          "tasks": [
+            { "name": "WCU llenado", "values": ["done"] },
+            { "name": "Sentido rotación bombas", "values": ["done"] },
+            { "name": "Tierra instalación", "values": ["done"] },
+            { "name": "Agua primario", "values": ["pending"] },
+            { "name": "FW cargado", "values": ["done"] },
+            { "name": "HMI cargado", "values": ["done"] },
+            { "name": "Aislamiento cables GSC", "values": ["done"] },
+            { "name": "Alimentación auxiliar 440V", "values": ["done"] },
+            { "name": "Medida Vrst", "values": ["done"] },
+            { "name": "Medida Vshore", "values": ["pending"] },
+            { "name": "MCB", "values": ["done"] },
+            { "name": "E-stops", "values": ["pending"] },
+            { "name": "Bender configurado", "values": ["done"] },
+            { "name": "Weidmuller - 10.100.1.196", "values": ["done"] },
+            { "name": "Fibra RAB", "values": ["pending"] },
+            { "name": "Comms. TCP con EMS", "values": ["done"] },
+            { "name": "Firewall", "values": ["pending"] },
+            { "name": "Tª trafo cabecera (1 devanado)", "values": ["done"] },
+            { "name": "Tª trafo shore (1 devanado)", "values": ["done"] },
+            { "name": "Comms. TCP con IAS", "values": ["done"] },
+            { "name": "Digitales con IAS", "values": ["done"] },
+            { "name": "Digitales/Analogicas con EMS", "values": ["done"] },
+            { "name": "Primera energización GSC1", "values": ["pending"] },
+            { "name": "Primera energización GSC2", "values": ["pending"] },
+            { "name": "Primera energización DCDC", "values": ["pending"] },
+            { "name": "Safeties por Tª trafos", "values": ["pending"] }
+          ]
+        }
+      }
+    },
+    "AUTOMATION": {
+      "label": "Automatización",
+      "icon": "🤖",
+      "subgroups": {
+        "PMS": {
+          "pct": 0.3,
+          "columns": ["Estado"],
+          "tasks": [
+            { "name": "Alimentación control", "values": ["done"] },
+            { "name": "SW cargado", "values": ["done"] },
+            { "name": "HMI cargado", "values": ["done"] },
+            { "name": "Canales CAN", "values": ["done"] },
+            { "name": "Anillo ethernet", "values": ["done"] },
+            { "name": "Comms. RTU IAS 1", "values": ["done"] },
+            { "name": "Comms. RTU IAS 2", "values": ["pending"] },
+            { "name": "Comms. RTU con EMS", "values": ["done"] },
+            { "name": "24Vdc en ESB", "values": ["done"] },
+            { "name": "Señales con MSB", "values": ["done"] },
+            { "name": "Señales con Gens", "values": ["pending"] },
+            { "name": "Señales ESB", "values": ["pending"] },
+            { "name": "Señales con drives MP", "values": ["done"] },
+            { "name": "Señales con drives proa", "values": ["done"] },
+            { "name": "Señales con EMS", "values": ["pending"] },
+            { "name": "Maniobras Gen 1", "values": ["done"] },
+            { "name": "Maniobras Gen 2", "values": ["done"] },
+            { "name": "Maniobras Gen 3", "values": ["done"] },
+            { "name": "Maniobras BTB", "values": ["done"] }
+          ]
+        },
+        "EMS": {
+          "pct": 0.4,
+          "columns": ["Estado"],
+          "tasks": [
+            { "name": "SW cargado", "values": ["done"] },
+            { "name": "230Vac emergencia", "values": ["done"] },
+            { "name": "24Vdc", "values": ["done"] },
+            { "name": "230Vac heater & light", "values": ["done"] },
+            { "name": "HMI cargado", "values": ["done"] },
+            { "name": "E-stop", "values": ["pending"] },
+            { "name": "Comms. RTU con PMS", "values": ["done"] },
+            { "name": "Comms. TCP con BMS", "values": ["pending"] },
+            { "name": "Comms. RTU con IAS", "values": ["done"] },
+            { "name": "Comms. TCP con Mdrive (MOXA)", "values": ["done"] },
+            { "name": "Ajuste fuentes de alimentación", "values": ["done"] },
+            { "name": "Fibra RAB", "values": ["pending"] },
+            { "name": "Señales con FC", "values": ["done"] },
+            { "name": "Señales con IAS", "values": ["pending"] },
+            { "name": "Señales con PMS", "values": ["done"] },
+            { "name": "Señales con DP", "values": ["pending"] },
+            { "name": "Señales con RAB", "values": ["pending"] },
+            { "name": "Pruebas funcionales", "values": ["pending"] }
+          ]
+        },
+        "SAFETY SYSTEM PS": {
+          "pct": 0.7,
+          "columns": ["PS"],
+          "tasks": [
+            { "name": "Relé K05 y cableado", "values": ["pending"] },
+            { "name": "HMI", "values": ["done"] },
+            { "name": "230Vac emergencia", "values": ["done"] },
+            { "name": "24Vdc principal", "values": ["done"] },
+            { "name": "230Vac heater & light", "values": ["done"] },
+            { "name": "SW cargado", "values": ["done"] },
+            { "name": "PT100 motor", "values": ["done"] },
+            { "name": "Señales con drive", "values": ["done"] },
+            { "name": "Señales con IAS", "values": ["done"] },
+            { "name": "Shutdown WB", "values": ["done"] },
+            { "name": "Botón override (NC)", "values": ["done"] },
+            { "name": "Comms. RTU PCS/IAS", "values": ["na"] },
+            { "name": "Reset de IAS", "values": ["pending"] },
+            { "name": "Water leakage", "values": ["done"] },
+            { "name": "Safeties", "values": ["pending"] }
+          ]
+        },
+        "SAFETY SYSTEM SB": {
+          "pct": 0.7,
+          "columns": ["SB"],
+          "tasks": [
+            { "name": "Relé K05 y cableado", "values": ["pending"] },
+            { "name": "HMI", "values": ["done"] },
+            { "name": "230Vac emergencia", "values": ["done"] },
+            { "name": "24Vdc principal", "values": ["done"] },
+            { "name": "230Vac heater & light", "values": ["done"] },
+            { "name": "SW cargado", "values": ["done"] },
+            { "name": "PT100 motor", "values": ["done"] },
+            { "name": "Señales con drive", "values": ["done"] },
+            { "name": "Señales con IAS", "values": ["done"] },
+            { "name": "Shutdown WB", "values": ["done"] },
+            { "name": "Botón override (NC)", "values": ["done"] },
+            { "name": "Comms. RTU PCS/IAS", "values": ["na"] },
+            { "name": "Reset de IAS", "values": ["pending"] },
+            { "name": "Water leakage", "values": ["done"] },
+            { "name": "Safeties", "values": ["pending"] }
+          ]
+        }
+      }
+    },
+    "MOTORS": {
+      "label": "Motores",
+      "icon": "🔧",
+      "subgroups": {
+        "MAIN PROP PS": {
+          "pct": 0.7,
+          "columns": ["PS"],
+          "tasks": [
+            { "name": "Datasheet", "values": ["done"] },
+            { "name": "Aislamiento windings", "values": ["done"] },
+            { "name": "Aislamiento cables", "values": ["done"] },
+            { "name": "Alineación", "values": ["pending"] },
+            { "name": "Faseado y pantallas", "values": ["done"] },
+            { "name": "Tierra instalación", "values": ["pending"] },
+            { "name": "PT100 winding", "values": ["done"] },
+            { "name": "PT100 bearing DE & NDE", "values": ["done"] },
+            { "name": "PT100 water IN & OUT", "values": ["na"] },
+            { "name": "Encoder 1", "values": ["done"] },
+            { "name": "Heaters - 225Vac MSB", "values": ["done"] },
+            { "name": "Tuberías cooling", "values": ["done"] },
+            { "name": "Water leakage 24Vdc", "values": ["done"] },
+            { "name": "Water leakage contacto", "values": ["done"] },
+            { "name": "Primera energización", "values": ["pending"] }
+          ]
+        },
+        "MAIN PROP SB": {
+          "pct": 0.7,
+          "columns": ["SB"],
+          "tasks": [
+            { "name": "Datasheet", "values": ["done"] },
+            { "name": "Aislamiento windings", "values": ["done"] },
+            { "name": "Aislamiento cables", "values": ["done"] },
+            { "name": "Alineación", "values": ["pending"] },
+            { "name": "Faseado y pantallas", "values": ["done"] },
+            { "name": "Tierra instalación", "values": ["done"] },
+            { "name": "PT100 winding", "values": ["done"] },
+            { "name": "PT100 bearing DE & NDE", "values": ["done"] },
+            { "name": "PT100 water IN & OUT", "values": ["na"] },
+            { "name": "Encoder 1", "values": ["done"] },
+            { "name": "Heaters - 225Vac MSB", "values": ["done"] },
+            { "name": "Tuberías cooling", "values": ["done"] },
+            { "name": "Water leakage 24Vdc", "values": ["done"] },
+            { "name": "Water leakage contacto", "values": ["done"] },
+            { "name": "Primera energización", "values": ["pending"] }
+          ]
+        },
+        "BOW": {
+          "pct": 0.8,
+          "columns": ["Estado"],
+          "tasks": [
+            { "name": "Circuito eq. y datasheet", "values": ["done"] },
+            { "name": "Aislamiento cables", "values": ["done"] },
+            { "name": "Aislamiento windings", "values": ["done"] },
+            { "name": "Faseado y pantallas", "values": ["done"] },
+            { "name": "Alineación", "values": ["pending"] },
+            { "name": "Tierra instalación", "values": ["done"] },
+            { "name": "Desacoplado", "values": ["done"] },
+            { "name": "PT100", "values": ["done"] },
+            { "name": "Encoder 1", "values": ["done"] },
+            { "name": "Heaters - 225Vac MSB", "values": ["done"] },
+            { "name": "Tuberías cooling", "values": ["done"] },
+            { "name": "Primera energización", "values": ["done"] },
+            { "name": "Water leakage a IAS", "values": ["pending"] }
+          ]
+        },
+        "SWING-UP THR.": {
+          "pct": 0.5,
+          "columns": ["Estado"],
+          "tasks": [
+            { "name": "Circuito eq. y datasheet", "values": ["done"] },
+            { "name": "Aislamiento cables", "values": ["done"] },
+            { "name": "Aislamiento windings", "values": ["done"] },
+            { "name": "Faseado y pantallas", "values": ["done"] },
+            { "name": "Alineación", "values": ["pending"] },
+            { "name": "Tierra instalación", "values": ["done"] },
+            { "name": "PT100", "values": ["done"] },
+            { "name": "Encoder 1", "values": ["done"] },
+            { "name": "Heaters - 225Vac MSB", "values": ["done"] },
+            { "name": "Tuberías cooling", "values": ["done"] },
+            { "name": "Primera energización", "values": ["pending"] },
+            { "name": "Water leakage a IAS", "values": ["pending"] }
+          ]
+        }
+      }
+    },
+    "TRAFOS": {
+      "label": "Transformadores",
+      "icon": "🔆",
+      "subgroups": {
+        "HOTEL PS": {
+          "pct": 0.8,
+          "columns": ["PS"],
+          "tasks": [
+            { "name": "Aislamiento cables", "values": ["done"] },
+            { "name": "Aislamiento windings", "values": ["done"] },
+            { "name": "PT100 al IAS", "values": ["done"] },
+            { "name": "220Vac heaters - MSB", "values": ["done"] },
+            { "name": "Primera energización", "values": ["done"] },
+            { "name": "Alarmas H & HH en IAS", "values": ["pending"] }
+          ]
+        },
+        "HOTEL SB": {
+          "pct": 0.8,
+          "columns": ["SB"],
+          "tasks": [
+            { "name": "Aislamiento cables", "values": ["done"] },
+            { "name": "Aislamiento windings", "values": ["done"] },
+            { "name": "PT100 al IAS", "values": ["done"] },
+            { "name": "220Vac heaters - MSB", "values": ["done"] },
+            { "name": "Primera energización", "values": ["done"] },
+            { "name": "Alarmas H & HH en IAS", "values": ["pending"] }
+          ]
+        },
+        "MULTIDRIVE": {
+          "pct": 0.6,
+          "columns": ["Estado"],
+          "tasks": [
+            { "name": "Aislamiento cables", "values": ["done"] },
+            { "name": "Aislamiento windings", "values": ["done"] },
+            { "name": "PT100", "values": ["done"] },
+            { "name": "220Vac heaters desde MSB", "values": ["done"] },
+            { "name": "Primera energización", "values": ["pending"] }
+          ]
+        },
+        "SHORE": {
+          "pct": 0.4,
+          "columns": ["Estado"],
+          "tasks": [
+            { "name": "Aislamiento cables", "values": ["pending"] },
+            { "name": "Aislamiento windings", "values": ["pending"] },
+            { "name": "PT100", "values": ["done"] },
+            { "name": "220Vac heaters", "values": ["pending"] },
+            { "name": "Links 1 a 1", "values": ["pending"] },
+            { "name": "Primera energización", "values": ["pending"] }
+          ]
+        }
+      }
+    }
+  }
+}
