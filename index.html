@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C806 — Commissioning</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --bg:         #0f1117;
+      --surface:    #181c26;
+      --surface2:   #1f2435;
+      --border:     #2a3045;
+      --border2:    #3a4260;
+      --text:       #e8ecf4;
+      --muted:      #6b7594;
+      --accent:     #4f8ef7;
+      --accent-dim: rgba(79,142,247,0.12);
+      --green:      #34d17a;
+      --green-dim:  rgba(52,209,122,0.12);
+      --amber:      #f5a623;
+      --amber-dim:  rgba(245,166,35,0.12);
+      --red:        #f05252;
+      --radius:     10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .hidden { display: none !important; }
+    button { font-family: 'Inter', sans-serif; cursor: pointer; }
+
+    /* MODALS */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.65);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 500;
+      backdrop-filter: blur(3px);
+    }
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px 30px;
+      width: 380px;
+      animation: fadeUp 0.18s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .modal-sub   { font-size: 13px; color: var(--muted); margin-bottom: 22px; }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block; font-size: 11px; font-weight: 600;
+      color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .field input {
+      width: 100%; padding: 10px 13px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-size: 14px;
+      font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.15s;
+    }
+    .field input:focus { border-color: var(--accent); }
+    .field-error { font-size: 12px; color: var(--red); margin-top: 10px; min-height: 18px; text-align: center; }
+
+    .modal-actions { display: flex; gap: 8px; margin-top: 8px; }
+    .btn-primary {
+      flex: 1; padding: 10px;
+      background: var(--accent); border: none; border-radius: 8px;
+      color: #fff; font-size: 13px; font-weight: 600; transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-ghost {
+      padding: 10px 16px;
+      background: none; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--muted); font-size: 13px; transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+
+    /* HEADER */
+    header {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0 28px; height: 56px;
+      display: flex; align-items: center; gap: 12px;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .h-logo { display: flex; align-items: center; gap: 9px; }
+    .h-logo .icon {
+      width: 30px; height: 30px;
+      background: var(--accent-dim); border: 1px solid var(--accent);
+      border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px;
+    }
+    .h-logo h1 { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; }
+
+    .h-global { display: flex; align-items: center; gap: 9px; margin-left: 20px; }
+    .h-global-label { font-size: 11px; color: var(--muted); }
+    .h-global-bar { width: 90px; height: 3px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .h-global-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s; }
+    .h-global-pct { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); }
+
+    .h-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+    .h-admin-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 11px;
+      background: none; border: 1px solid var(--border);
+      border-radius: 6px; color: var(--muted); font-size: 12px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .h-admin-btn:hover { color: var(--text); border-color: var(--border2); }
+    .h-admin-btn.logged { color: var(--amber); border-color: rgba(245,166,35,0.35); background: var(--amber-dim); }
+
+    .h-save-btn {
+      display: flex; align-items: center; gap: 5px; padding: 5px 12px;
+      background: var(--green-dim); border: 1px solid rgba(52,209,122,0.3);
+      border-radius: 6px; color: var(--green); font-size: 12px; font-weight: 600;
+      transition: opacity 0.15s;
+    }
+    .h-save-btn:hover { opacity: 0.8; }
+    .h-save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .h-icon-btn {
+      width: 30px; height: 30px;
+      background: none; border: 1px solid var(--border);
+      border-radius: 6px; color: var(--muted); font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .h-icon-btn:hover { color: var(--text); border-color: var(--border2); }
+
+    .save-status { font-size: 11px; color: var(--muted); }
+    .save-status.ok     { color: var(--green); }
+    .save-status.err    { color: var(--red); }
+    .save-status.saving { color: var(--amber); }
+
+    /* LOADING SCREEN */
+    #loadingScreen {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px; z-index: 200;
+    }
+    .spinner {
+      width: 32px; height: 32px; border: 3px solid var(--border);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loadingScreen p { font-size: 13px; color: var(--muted); }
+
+    /* MAIN */
+    main { max-width: 1100px; margin: 0 auto; padding: 0 24px 60px; }
+    .section-label {
+      font-size: 11px; font-weight: 500; color: var(--muted);
+      letter-spacing: 1.2px; text-transform: uppercase; padding: 30px 0 14px;
+    }
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+    .s-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px 18px 16px;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    }
+    .s-card:hover { border-color: var(--accent); background: var(--surface2); }
+    .s-card-tag  { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 0.9px; text-transform: uppercase; margin-bottom: 8px; }
+    .s-card-name { font-size: 13px; font-weight: 600; margin-bottom: 14px; line-height: 1.3; }
+    .s-pct-row   { display: flex; align-items: center; gap: 8px; }
+    .s-bar-wrap  { flex: 1; height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .s-bar-fill  { height: 100%; border-radius: 4px; transition: width 0.5s; }
+    .s-pct-num   { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; min-width: 30px; text-align: right; }
+
+    /* DETAIL */
+    .detail-top { display: flex; align-items: center; gap: 12px; padding: 26px 0 18px; }
+    .back-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); padding: 5px 12px; border-radius: 6px;
+      font-size: 12px; transition: color 0.15s, border-color 0.15s;
+    }
+    .back-btn:hover { color: var(--text); border-color: var(--accent); }
+    .detail-top h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.4px; }
+
+    .sub-tabs { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 16px; }
+    .sub-tab {
+      padding: 6px 14px; border-radius: 20px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--muted); font-size: 12px; font-weight: 500;
+      display: flex; align-items: center; gap: 6px; transition: all 0.15s;
+    }
+    .sub-tab:hover { border-color: var(--accent); color: var(--text); }
+    .sub-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .sub-tab .tpct { font-family: 'JetBrains Mono', monospace; font-size: 10px; opacity: 0.85; }
+
+    .prog-strip {
+      display: flex; align-items: center; gap: 14px; padding: 11px 16px; margin-bottom: 14px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    }
+    .prog-strip-label { font-size: 12px; color: var(--muted); }
+    .prog-wrap { flex: 1; height: 5px; background: var(--border); border-radius: 5px; overflow: hidden; }
+    .prog-fill { height: 100%; border-radius: 5px; transition: width 0.4s; }
+    .prog-pct  { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; min-width: 36px; text-align: right; }
+
+    /* TASK TABLE */
+    .task-table { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .t-head, .t-row { display: grid; align-items: center; padding: 10px 16px; }
+    .t-head { background: var(--surface2); border-bottom: 1px solid var(--border); }
+    .t-row  { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+    .t-row:last-child { border-bottom: none; }
+    .t-row:hover { background: var(--surface2); }
+    .th { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; text-align: center; }
+    .th:first-child { text-align: left; }
+    .t-name { font-size: 13px; }
+    .t-cell { display: flex; align-items: center; justify-content: center; }
+
+    .status-btn {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 2px solid var(--border); background: none;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.12s, background 0.12s, transform 0.1s;
+    }
+    .status-btn[data-v="done"]    { border-color: var(--green); background: var(--green-dim); }
+    .status-btn[data-v="pending"] { border-color: var(--border); background: none; }
+    .status-btn[data-v="na"]      { border-color: var(--muted); background: rgba(107,117,148,0.1); }
+    .status-btn.editable { cursor: pointer; }
+    .status-btn.editable:hover { transform: scale(1.15); }
+
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: block; }
+    .dot-done    { background: var(--green); box-shadow: 0 0 5px var(--green); }
+    .dot-pending { background: transparent; border: 1.5px solid var(--muted); width: 7px; height: 7px; }
+    .dot-na      { background: var(--muted); }
+
+    .t-legend {
+      display: flex; gap: 18px; align-items: center; padding: 11px 16px;
+      border-top: 1px solid var(--border); background: var(--surface2);
+    }
+    .t-legend span { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+
+    /* TOAST */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 9px; padding: 11px 16px; font-size: 13px; color: var(--text);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+      transform: translateY(70px); opacity: 0;
+      transition: transform 0.22s, opacity 0.22s; z-index: 600;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.ok   { border-color: var(--green); color: var(--green); }
+    #toast.err  { border-color: var(--red);   color: var(--red); }
+  </style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+  <div class="spinner"></div>
+  <p>Cargando datos…</p>
+</div>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-title">🔒 Acceso Admin</div>
+    <div class="modal-sub">Introduce la contraseña para activar el modo edición.</div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="loginSubmitBtn">Entrar</button>
+      <button class="btn-ghost" id="loginCancelBtn">Cancelar</button>
+    </div>
+    <div class="field-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="h-logo">
+    <div class="icon">⚡</div>
+    <h1>C806 Commissioning</h1>
+  </div>
+  <div class="h-global">
+    <span class="h-global-label">Global</span>
+    <div class="h-global-bar"><div class="h-global-fill" id="hGlobalFill"></div></div>
+    <span class="h-global-pct" id="hGlobalPct"></span>
+  </div>
+  <div class="h-right">
+    <span class="save-status" id="saveStatus"></span>
+    <button class="h-save-btn hidden" id="saveBtn">↑ Guardar</button>
+    <button class="h-icon-btn hidden" id="logoutBtn" title="Cerrar sesión admin">⏻</button>
+    <button class="h-admin-btn" id="adminBtn">🔒 Admin</button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+  <div id="summaryView">
+    <div class="section-label">Sistemas</div>
+    <div class="summary-grid" id="summaryGrid"></div>
+  </div>
+  <div id="detailView" class="hidden">
+    <div class="detail-top">
+      <button class="back-btn" id="backBtn">← Volver</button>
+      <h2 id="detailTitle"></h2>
+    </div>
+    <div class="sub-tabs" id="subTabs"></div>
+    <div class="prog-strip">
+      <span class="prog-strip-label">Completado</span>
+      <div class="prog-wrap"><div class="prog-fill" id="progFill"></div></div>
+      <span class="prog-pct" id="progPct"></span>
+    </div>
+    <div class="task-table" id="taskTable"></div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+(function () {
+
+  // ── CONFIGURACIÓN ─────────────────────────────────
+  var ADMIN_PASSWORD  = 'c806admin';
+  var SUPABASE_URL    = 'https://kcoohyaubmpyngsvfgyv.supabase.co';
+  var SUPABASE_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtjb29oeWF1Ym1weW5nc3ZmZ3l2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MTM2MjAsImV4cCI6MjA5ODE4OTYyMH0.cpeJ2N1OwCfIa9LTC3CowbNt0G9tAFtU0--mupM4w0g';
+  var TABLE           = 'commissioning_data';
+  var API             = SUPABASE_URL + '/rest/v1/' + TABLE;
+  var HEADERS         = {
+    'apikey':        SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY,
+    'Content-Type':  'application/json',
+    'Prefer':        'return=representation'
+  };
+
+  // ── ESTADO ───────────────────────────────────────
+  var isAdmin         = false;
+  var DATA            = null;
+  var dirty           = false;
+  var currentGroup    = null;
+  var currentSubgroup = null;
+  var toastTimer      = null;
+  var CYCLE           = { pending: 'done', done: 'na', na: 'pending' };
+
+  // ── DATOS POR DEFECTO (primera carga) ────────────
+  var DEFAULT_DATA = {
+    meta: { project: 'C806', title: 'C806 Commissioning', lastUpdated: '' },
+    groups: {
+      SWITCHBOARDS: {
+        label: 'Cuadros Eléctricos', icon: '🔌',
+        subgroups: {
+          'MAIN SWITCHBOARD 440': {
+            pct: 0.85, columns: ['Estado'],
+            tasks: [
+              { name: 'Emenasa - interconexión cuadros', values: ['done'] },
+              { name: 'Aislamiento barras', values: ['done'] },
+              { name: 'Ajuste fuentes de alimentación', values: ['done'] },
+              { name: 'MTR configurados', values: ['done'] },
+              { name: 'DEIF configurados', values: ['done'] },
+              { name: 'Cableado potencia check', values: ['done'] },
+              { name: '24Vdc UPS', values: ['done'] },
+              { name: '230Vac heaters P5', values: ['done'] },
+              { name: 'Añadir bornas resis + cableado', values: ['done'] },
+              { name: 'Placa características y pegatinas', values: ['done'] },
+              { name: 'AVR y relé diferencial incluido externo', values: ['pending'] },
+              { name: 'CAN y ethernet a ESB', values: ['done'] },
+              { name: 'Primera energización', values: ['done'] },
+              { name: 'Protecciones DEIF', values: ['done'] },
+              { name: 'Protecciones ABB', values: ['done'] },
+              { name: 'Digitales con IAS', values: ['done'] },
+              { name: 'Interfaces engines', values: ['pending'] },
+              { name: 'Instalar conversor fibra a TCP', values: ['done'] },
+              { name: 'Fibra a RAB', values: ['pending'] },
+              { name: '24Vdc Generadores ajustada', values: ['done'] }
+            ]
+          },
+          'REMOTE ACCESS BOX': {
+            pct: 0.27, columns: ['Estado'],
+            tasks: [
+              { name: 'Modificación router', values: ['pending'] },
+              { name: '230Vac principal', values: ['done'] },
+              { name: '230Vac luces', values: ['done'] },
+              { name: '24Vdc UPS', values: ['done'] },
+              { name: 'Fibra EMS', values: ['pending'] },
+              { name: 'Fibra PMS', values: ['pending'] },
+              { name: 'Fibra Multidrive', values: ['pending'] },
+              { name: 'Fibras MP drives', values: ['pending'] },
+              { name: 'Fibra Bow drive', values: ['pending'] },
+              { name: 'Fibra Swing-up drive', values: ['pending'] },
+              { name: 'Digitales con EMS', values: ['pending'] }
+            ]
+          }
+        }
+      },
+      DRIVES: {
+        label: 'Variadores', icon: '⚙️',
+        subgroups: {
+          'MAIN PROPULSION PS': {
+            pct: 0.63, columns: ['PS'],
+            tasks: [
+              { name: 'WCU llenado', values: ['done'] },
+              { name: 'Sentido rotación bombas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'Agua primario', values: ['pending'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'FW cargado', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'Aislamiento cables GSC', values: ['done'] },
+              { name: 'Alimentación auxiliar 440V', values: ['done'] },
+              { name: 'Digitales con MCB', values: ['done'] },
+              { name: 'E-stops', values: ['done'] },
+              { name: 'Fibra RAB', values: ['pending'] },
+              { name: 'Firewall', values: ['pending'] },
+              { name: 'Comms. TCP con IAS', values: ['done'] },
+              { name: 'Primera energización GSC', values: ['done'] },
+              { name: 'Primera energización MSC', values: ['pending'] },
+              { name: 'Digitales con IAS', values: ['done'] },
+              { name: 'Señales con PMS', values: ['done'] },
+              { name: 'Shutdown WB', values: ['done'] }
+            ]
+          },
+          'MAIN PROPULSION SB': {
+            pct: 0.63, columns: ['SB'],
+            tasks: [
+              { name: 'WCU llenado', values: ['done'] },
+              { name: 'Sentido rotación bombas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'Agua primario', values: ['pending'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'FW cargado', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'Aislamiento cables GSC', values: ['done'] },
+              { name: 'Alimentación auxiliar 440V', values: ['done'] },
+              { name: 'Digitales con MCB', values: ['done'] },
+              { name: 'E-stops', values: ['done'] },
+              { name: 'Fibra RAB', values: ['pending'] },
+              { name: 'Firewall', values: ['pending'] },
+              { name: 'Comms. TCP con IAS', values: ['done'] },
+              { name: 'Primera energización GSC', values: ['done'] },
+              { name: 'Primera energización MSC', values: ['pending'] },
+              { name: 'Digitales con IAS', values: ['done'] },
+              { name: 'Señales con PMS', values: ['done'] },
+              { name: 'Shutdown WB', values: ['done'] }
+            ]
+          },
+          'BOW': {
+            pct: 0.77, columns: ['Estado'],
+            tasks: [
+              { name: 'WCU llenado', values: ['done'] },
+              { name: 'Sentido rotación bombas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'FW cargado', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'Agua primario', values: ['pending'] },
+              { name: 'Aislamiento cables GSC', values: ['done'] },
+              { name: 'Alimentación auxiliar 440V', values: ['done'] },
+              { name: 'MCB', values: ['done'] },
+              { name: 'E-stops', values: ['done'] },
+              { name: 'Fibra RAB', values: ['done'] },
+              { name: 'Firewall instalado', values: ['done'] },
+              { name: 'Comms. TCP con IAS', values: ['done'] },
+              { name: 'Primera energización GSC', values: ['done'] },
+              { name: 'Primera energización MSC', values: ['done'] },
+              { name: 'Ajuste IF y VC vacío', values: ['done'] },
+              { name: 'Ajuste en carga', values: ['pending'] },
+              { name: 'PT100 Motor winding + bearing', values: ['done'] },
+              { name: 'Safeties temperaturas motor', values: ['pending'] },
+              { name: 'Digitales con IAS', values: ['done'] },
+              { name: 'Señales con PMS', values: ['done'] }
+            ]
+          },
+          'SWING-UP THR.': {
+            pct: 0.7, columns: ['Estado'],
+            tasks: [
+              { name: 'WCU llenado', values: ['done'] },
+              { name: 'Sentido rotación bombas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'Encoder 1', values: ['pending'] },
+              { name: 'FW cargado', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'Agua primario', values: ['pending'] },
+              { name: 'Aislamiento cables GSC', values: ['done'] },
+              { name: 'Alimentación auxiliar 440V', values: ['done'] },
+              { name: 'MCB', values: ['done'] },
+              { name: 'E-stops', values: ['done'] },
+              { name: 'Fibra RAB', values: ['done'] },
+              { name: 'Firewall instalado', values: ['done'] },
+              { name: 'Comms. TCP con IAS', values: ['done'] },
+              { name: 'Primera energización GSC', values: ['done'] },
+              { name: 'Primera energización MSC', values: ['pending'] },
+              { name: 'PT100 Motor winding + bearing', values: ['done'] },
+              { name: 'Safeties temperaturas motor', values: ['pending'] },
+              { name: 'Digitales con IAS', values: ['done'] },
+              { name: 'Señales con PMS', values: ['done'] }
+            ]
+          },
+          'MULTIDRIVE': {
+            pct: 0.5, columns: ['Estado'],
+            tasks: [
+              { name: 'WCU llenado', values: ['done'] },
+              { name: 'Sentido rotación bombas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'Agua primario', values: ['pending'] },
+              { name: 'FW cargado', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'Aislamiento cables GSC', values: ['done'] },
+              { name: 'Alimentación auxiliar 440V', values: ['done'] },
+              { name: 'Medida Vrst', values: ['done'] },
+              { name: 'Medida Vshore', values: ['pending'] },
+              { name: 'MCB', values: ['done'] },
+              { name: 'E-stops', values: ['pending'] },
+              { name: 'Bender configurado', values: ['done'] },
+              { name: 'Weidmuller - 10.100.1.196', values: ['done'] },
+              { name: 'Fibra RAB', values: ['pending'] },
+              { name: 'Comms. TCP con EMS', values: ['done'] },
+              { name: 'Firewall', values: ['pending'] },
+              { name: 'Tª trafo cabecera (1 devanado)', values: ['done'] },
+              { name: 'Tª trafo shore (1 devanado)', values: ['done'] },
+              { name: 'Comms. TCP con IAS', values: ['done'] },
+              { name: 'Digitales con IAS', values: ['done'] },
+              { name: 'Digitales/Analogicas con EMS', values: ['done'] },
+              { name: 'Primera energización GSC1', values: ['pending'] },
+              { name: 'Primera energización GSC2', values: ['pending'] },
+              { name: 'Primera energización DCDC', values: ['pending'] },
+              { name: 'Safeties por Tª trafos', values: ['pending'] }
+            ]
+          }
+        }
+      },
+      AUTOMATION: {
+        label: 'Automatización', icon: '🤖',
+        subgroups: {
+          'PMS': {
+            pct: 0.68, columns: ['Estado'],
+            tasks: [
+              { name: 'Alimentación control', values: ['done'] },
+              { name: 'SW cargado', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'Canales CAN', values: ['done'] },
+              { name: 'Anillo ethernet', values: ['done'] },
+              { name: 'Comms. RTU IAS 1', values: ['done'] },
+              { name: 'Comms. RTU IAS 2', values: ['pending'] },
+              { name: 'Comms. RTU con EMS', values: ['done'] },
+              { name: '24Vdc en ESB', values: ['done'] },
+              { name: 'Señales con MSB', values: ['done'] },
+              { name: 'Señales con Gens', values: ['pending'] },
+              { name: 'Señales ESB', values: ['pending'] },
+              { name: 'Señales con drives MP', values: ['done'] },
+              { name: 'Señales con drives proa', values: ['done'] },
+              { name: 'Señales con EMS', values: ['pending'] },
+              { name: 'Maniobras Gen 1', values: ['done'] },
+              { name: 'Maniobras Gen 2', values: ['done'] },
+              { name: 'Maniobras Gen 3', values: ['done'] },
+              { name: 'Maniobras BTB', values: ['done'] }
+            ]
+          },
+          'EMS': {
+            pct: 0.56, columns: ['Estado'],
+            tasks: [
+              { name: 'SW cargado', values: ['done'] },
+              { name: '230Vac emergencia', values: ['done'] },
+              { name: '24Vdc', values: ['done'] },
+              { name: '230Vac heater & light', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'E-stop', values: ['pending'] },
+              { name: 'Comms. RTU con PMS', values: ['done'] },
+              { name: 'Comms. TCP con BMS', values: ['pending'] },
+              { name: 'Comms. RTU con IAS', values: ['done'] },
+              { name: 'Comms. TCP con Mdrive (MOXA)', values: ['done'] },
+              { name: 'Ajuste fuentes de alimentación', values: ['done'] },
+              { name: 'Fibra RAB', values: ['pending'] },
+              { name: 'Señales con FC', values: ['done'] },
+              { name: 'Señales con IAS', values: ['pending'] },
+              { name: 'Señales con PMS', values: ['done'] },
+              { name: 'Señales con DP', values: ['pending'] },
+              { name: 'Señales con RAB', values: ['pending'] },
+              { name: 'Pruebas funcionales', values: ['pending'] }
+            ]
+          },
+          'SAFETY SYSTEM PS': {
+            pct: 0.73, columns: ['PS'],
+            tasks: [
+              { name: 'Relé K05 y cableado', values: ['pending'] },
+              { name: 'HMI', values: ['done'] },
+              { name: '230Vac emergencia', values: ['done'] },
+              { name: '24Vdc principal', values: ['done'] },
+              { name: '230Vac heater & light', values: ['done'] },
+              { name: 'SW cargado', values: ['done'] },
+              { name: 'PT100 motor', values: ['done'] },
+              { name: 'Señales con drive', values: ['done'] },
+              { name: 'Señales con IAS', values: ['done'] },
+              { name: 'Shutdown WB', values: ['done'] },
+              { name: 'Botón override (NC)', values: ['done'] },
+              { name: 'Comms. RTU PCS/IAS', values: ['na'] },
+              { name: 'Reset de IAS', values: ['pending'] },
+              { name: 'Water leakage', values: ['done'] },
+              { name: 'Safeties', values: ['pending'] }
+            ]
+          },
+          'SAFETY SYSTEM SB': {
+            pct: 0.73, columns: ['SB'],
+            tasks: [
+              { name: 'Relé K05 y cableado', values: ['pending'] },
+              { name: 'HMI', values: ['done'] },
+              { name: '230Vac emergencia', values: ['done'] },
+              { name: '24Vdc principal', values: ['done'] },
+              { name: '230Vac heater & light', values: ['done'] },
+              { name: 'SW cargado', values: ['done'] },
+              { name: 'PT100 motor', values: ['done'] },
+              { name: 'Señales con drive', values: ['done'] },
+              { name: 'Señales con IAS', values: ['done'] },
+              { name: 'Shutdown WB', values: ['done'] },
+              { name: 'Botón override (NC)', values: ['done'] },
+              { name: 'Comms. RTU PCS/IAS', values: ['na'] },
+              { name: 'Reset de IAS', values: ['pending'] },
+              { name: 'Water leakage', values: ['done'] },
+              { name: 'Safeties', values: ['pending'] }
+            ]
+          }
+        }
+      },
+      MOTORS: {
+        label: 'Motores', icon: '🔧',
+        subgroups: {
+          'MAIN PROP PS': {
+            pct: 0.73, columns: ['PS'],
+            tasks: [
+              { name: 'Datasheet', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Alineación', values: ['pending'] },
+              { name: 'Faseado y pantallas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['pending'] },
+              { name: 'PT100 winding', values: ['done'] },
+              { name: 'PT100 bearing DE & NDE', values: ['done'] },
+              { name: 'PT100 water IN & OUT', values: ['na'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'Heaters - 225Vac MSB', values: ['done'] },
+              { name: 'Tuberías cooling', values: ['done'] },
+              { name: 'Water leakage 24Vdc', values: ['done'] },
+              { name: 'Water leakage contacto', values: ['done'] },
+              { name: 'Primera energización', values: ['pending'] }
+            ]
+          },
+          'MAIN PROP SB': {
+            pct: 0.73, columns: ['SB'],
+            tasks: [
+              { name: 'Datasheet', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Alineación', values: ['pending'] },
+              { name: 'Faseado y pantallas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'PT100 winding', values: ['done'] },
+              { name: 'PT100 bearing DE & NDE', values: ['done'] },
+              { name: 'PT100 water IN & OUT', values: ['na'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'Heaters - 225Vac MSB', values: ['done'] },
+              { name: 'Tuberías cooling', values: ['done'] },
+              { name: 'Water leakage 24Vdc', values: ['done'] },
+              { name: 'Water leakage contacto', values: ['done'] },
+              { name: 'Primera energización', values: ['pending'] }
+            ]
+          },
+          'BOW': {
+            pct: 0.85, columns: ['Estado'],
+            tasks: [
+              { name: 'Circuito eq. y datasheet', values: ['done'] },
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'Faseado y pantallas', values: ['done'] },
+              { name: 'Alineación', values: ['pending'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'Desacoplado', values: ['done'] },
+              { name: 'PT100', values: ['done'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'Heaters - 225Vac MSB', values: ['done'] },
+              { name: 'Tuberías cooling', values: ['done'] },
+              { name: 'Primera energización', values: ['done'] },
+              { name: 'Water leakage a IAS', values: ['pending'] }
+            ]
+          },
+          'SWING-UP THR.': {
+            pct: 0.58, columns: ['Estado'],
+            tasks: [
+              { name: 'Circuito eq. y datasheet', values: ['done'] },
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'Faseado y pantallas', values: ['done'] },
+              { name: 'Alineación', values: ['pending'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'PT100', values: ['done'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'Heaters - 225Vac MSB', values: ['done'] },
+              { name: 'Tuberías cooling', values: ['done'] },
+              { name: 'Primera energización', values: ['pending'] },
+              { name: 'Water leakage a IAS', values: ['pending'] }
+            ]
+          }
+        }
+      },
+      TRAFOS: {
+        label: 'Transformadores', icon: '🔆',
+        subgroups: {
+          'HOTEL PS': {
+            pct: 0.83, columns: ['PS'],
+            tasks: [
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'PT100 al IAS', values: ['done'] },
+              { name: '220Vac heaters - MSB', values: ['done'] },
+              { name: 'Primera energización', values: ['done'] },
+              { name: 'Alarmas H & HH en IAS', values: ['pending'] }
+            ]
+          },
+          'HOTEL SB': {
+            pct: 0.83, columns: ['SB'],
+            tasks: [
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'PT100 al IAS', values: ['done'] },
+              { name: '220Vac heaters - MSB', values: ['done'] },
+              { name: 'Primera energización', values: ['done'] },
+              { name: 'Alarmas H & HH en IAS', values: ['pending'] }
+            ]
+          },
+          'MULTIDRIVE': {
+            pct: 0.6, columns: ['Estado'],
+            tasks: [
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'PT100', values: ['done'] },
+              { name: '220Vac heaters desde MSB', values: ['done'] },
+              { name: 'Primera energización', values: ['pending'] }
+            ]
+          },
+          'SHORE': {
+            pct: 0.17, columns: ['Estado'],
+            tasks: [
+              { name: 'Aislamiento cables', values: ['pending'] },
+              { name: 'Aislamiento windings', values: ['pending'] },
+              { name: 'PT100', values: ['done'] },
+              { name: '220Vac heaters', values: ['pending'] },
+              { name: 'Links 1 a 1', values: ['pending'] },
+              { name: 'Primera energización', values: ['pending'] }
+            ]
+          }
+        }
+      }
+    }
+  };
+
+  // ── SUPABASE ──────────────────────────────────────
+  function dbLoad() {
+    return fetch(API + '?id=eq.1&select=data', { headers: HEADERS })
+      .then(function (r) { return r.json(); })
+      .then(function (rows) {
+        if (rows && rows.length && rows[0].data && rows[0].data.groups) {
+          return rows[0].data;
+        }
+        // Primera vez: subir datos por defecto
+        return dbSave(DEFAULT_DATA).then(function () { return DEFAULT_DATA; });
+      });
+  }
+
+  function dbSave(dataObj) {
+    dataObj.meta.lastUpdated = new Date().toISOString();
+    return fetch(API + '?id=eq.1', {
+      method: 'PATCH',
+      headers: HEADERS,
+      body: JSON.stringify({ data: dataObj, updated_at: new Date().toISOString() })
+    }).then(function (r) {
+      if (!r.ok) return r.text().then(function (t) { throw new Error(t); });
+      return r;
+    });
+  }
+
+  // ── HELPERS ───────────────────────────────────────
+  function pctColor(p) {
+    if (p >= 0.75) return 'var(--green)';
+    if (p >= 0.40) return 'var(--amber)';
+    return 'var(--red)';
+  }
+  function calcGroupPct(k) {
+    var subs = Object.values(DATA.groups[k].subgroups);
+    return subs.reduce(function (a, v) { return a + v.pct; }, 0) / subs.length;
+  }
+  function calcSubPct(sub) {
+    var el = sub.tasks.filter(function (t) { return t.values[0] !== 'na'; });
+    if (!el.length) return 0;
+    return el.filter(function (t) { return t.values[0] === 'done'; }).length / el.length;
+  }
+  function updateSubPct(gk, sk) {
+    DATA.groups[gk].subgroups[sk].pct = Math.round(calcSubPct(DATA.groups[gk].subgroups[sk]) * 100) / 100;
+  }
+  function updateGlobalBar() {
+    var keys = Object.keys(DATA.groups);
+    var avg  = keys.reduce(function (a, k) { return a + calcGroupPct(k); }, 0) / keys.length;
+    document.getElementById('hGlobalFill').style.width = (avg * 100) + '%';
+    document.getElementById('hGlobalPct').textContent  = Math.round(avg * 100) + '%';
+  }
+  function setSaveStatus(text, cls) {
+    var el = document.getElementById('saveStatus');
+    el.textContent = text;
+    el.className   = 'save-status ' + cls;
+  }
+  function markDirty() {
+    if (!dirty) {
+      dirty = true;
+      document.getElementById('saveBtn').classList.remove('hidden');
+      setSaveStatus('Cambios sin guardar', 'err');
+    }
+  }
+  function showToast(msg, type) {
+    var el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className   = 'show ' + (type || '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.className = ''; }, 3200);
+  }
+
+  // ── LOGIN ─────────────────────────────────────────
+  function openLogin() {
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginError').textContent = '';
+    document.getElementById('loginModal').classList.remove('hidden');
+    setTimeout(function () { document.getElementById('loginPass').focus(); }, 80);
+  }
+  function closeLogin() {
+    document.getElementById('loginModal').classList.add('hidden');
+  }
+  function doLogin() {
+    var pass = document.getElementById('loginPass').value;
+    if (pass === ADMIN_PASSWORD) {
+      isAdmin = true;
+      closeLogin();
+      var btn = document.getElementById('adminBtn');
+      btn.classList.add('logged');
+      btn.textContent = '✓ Admin';
+      document.getElementById('logoutBtn').classList.remove('hidden');
+      if (currentSubgroup) renderTasks(currentGroup, currentSubgroup);
+      showToast('Modo edición activado', 'ok');
+    } else {
+      document.getElementById('loginError').textContent = 'Contraseña incorrecta.';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginPass').focus();
+    }
+  }
+  function doLogout() {
+    isAdmin = false;
+    dirty   = false;
+    var btn = document.getElementById('adminBtn');
+    btn.classList.remove('logged');
+    btn.textContent = '🔒 Admin';
+    document.getElementById('logoutBtn').classList.add('hidden');
+    document.getElementById('saveBtn').classList.add('hidden');
+    setSaveStatus('', '');
+    if (currentSubgroup) renderTasks(currentGroup, currentSubgroup);
+    showToast('Sesión admin cerrada', '');
+  }
+
+  // ── GUARDAR EN SUPABASE ───────────────────────────
+  function saveData() {
+    var btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    setSaveStatus('Guardando…', 'saving');
+    dbSave(DATA)
+      .then(function () {
+        dirty = false;
+        btn.classList.add('hidden');
+        setSaveStatus('Guardado ✓', 'ok');
+        showToast('Cambios guardados en la nube ✓', 'ok');
+      })
+      .catch(function (e) {
+        setSaveStatus('Error al guardar', 'err');
+        showToast('Error: ' + e.message, 'err');
+      })
+      .finally(function () {
+        btn.disabled = false;
+      });
+  }
+
+  // ── RENDER ────────────────────────────────────────
+  function render() {
+    updateGlobalBar();
+    renderSummary();
+  }
+
+  function renderSummary() {
+    var grid = document.getElementById('summaryGrid');
+    grid.innerHTML = '';
+    Object.keys(DATA.groups).forEach(function (key) {
+      var group = DATA.groups[key];
+      var avg   = calcGroupPct(key);
+      var color = pctColor(avg);
+      var card  = document.createElement('div');
+      card.className = 's-card';
+      card.innerHTML =
+        '<div class="s-card-tag">' + group.icon + ' ' + key + '</div>' +
+        '<div class="s-card-name">' + group.label + '</div>' +
+        '<div class="s-pct-row">' +
+          '<div class="s-bar-wrap"><div class="s-bar-fill" style="width:' + (avg * 100) + '%;background:' + color + '"></div></div>' +
+          '<span class="s-pct-num" style="color:' + color + '">' + Math.round(avg * 100) + '%</span>' +
+        '</div>';
+      card.addEventListener('click', function () { showDetail(key); });
+      grid.appendChild(card);
+    });
+  }
+
+  function showDetail(groupKey) {
+    currentGroup = groupKey;
+    var group    = DATA.groups[groupKey];
+    document.getElementById('summaryView').classList.add('hidden');
+    document.getElementById('detailView').classList.remove('hidden');
+    document.getElementById('detailTitle').textContent = group.icon + ' ' + group.label;
+
+    var tabsEl  = document.getElementById('subTabs');
+    tabsEl.innerHTML = '';
+    var subkeys = Object.keys(group.subgroups);
+
+    subkeys.forEach(function (sk, i) {
+      var sub = group.subgroups[sk];
+      var tab = document.createElement('button');
+      tab.className  = 'sub-tab' + (i === 0 ? ' active' : '');
+      tab.dataset.sk = sk;
+      tab.innerHTML  = sk + ' <span class="tpct">' + Math.round(sub.pct * 100) + '%</span>';
+      tab.addEventListener('click', function () {
+        document.querySelectorAll('.sub-tab').forEach(function (t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        renderTasks(groupKey, sk);
+      });
+      tabsEl.appendChild(tab);
+    });
+
+    currentSubgroup = subkeys[0];
+    renderTasks(groupKey, subkeys[0]);
+  }
+
+  function showSummary() {
+    document.getElementById('summaryView').classList.remove('hidden');
+    document.getElementById('detailView').classList.add('hidden');
+    currentGroup    = null;
+    currentSubgroup = null;
+    renderSummary();
+    updateGlobalBar();
+  }
+
+  function renderTasks(groupKey, subKey) {
+    currentSubgroup = subKey;
+    var sub   = DATA.groups[groupKey].subgroups[subKey];
+    var pct   = sub.pct;
+    var color = pctColor(pct);
+
+    document.getElementById('progFill').style.width      = (pct * 100) + '%';
+    document.getElementById('progFill').style.background = color;
+    document.getElementById('progPct').textContent       = Math.round(pct * 100) + '%';
+    document.getElementById('progPct').style.color       = color;
+
+    var cols = sub.columns;
+    var tpl  = '1fr ' + cols.map(function () { return '70px'; }).join(' ');
+
+    var html = '<div class="t-head" style="grid-template-columns:' + tpl + '">' +
+      '<div class="th">Tarea</div>' +
+      cols.map(function (c) { return '<div class="th">' + c + '</div>'; }).join('') +
+      '</div>';
+
+    sub.tasks.forEach(function (task, ti) {
+      var cells = task.values.map(function (v, vi) {
+        if (isAdmin) {
+          return '<div class="t-cell">' +
+            '<button class="status-btn editable" data-v="' + v + '" data-ti="' + ti + '" data-vi="' + vi + '" data-gk="' + groupKey + '" data-sk="' + subKey + '">' +
+            '<span class="dot dot-' + v + '"></span>' +
+            '</button></div>';
+        }
+        return '<div class="t-cell"><div class="status-btn" data-v="' + v + '"><span class="dot dot-' + v + '"></span></div></div>';
+      }).join('');
+      html += '<div class="t-row" style="grid-template-columns:' + tpl + '">' +
+        '<div class="t-name">' + task.name + '</div>' + cells + '</div>';
+    });
+
+    html += '<div class="t-legend">' +
+      '<span><span class="dot dot-done"></span> Completado</span>' +
+      '<span><span class="dot dot-pending"></span> Pendiente</span>' +
+      '<span><span class="dot dot-na"></span> N/A</span>' +
+      (isAdmin ? '<span style="margin-left:auto;color:var(--accent);font-size:10px">✏ Clic para cambiar estado</span>' : '') +
+      '</div>';
+
+    document.getElementById('taskTable').innerHTML = html;
+  }
+
+  function cycleStatus(btn) {
+    var gk   = btn.dataset.gk;
+    var sk   = btn.dataset.sk;
+    var ti   = parseInt(btn.dataset.ti, 10);
+    var vi   = parseInt(btn.dataset.vi, 10);
+    var task = DATA.groups[gk].subgroups[sk].tasks[ti];
+    var next = CYCLE[task.values[vi]];
+    task.values[vi] = next;
+
+    btn.setAttribute('data-v', next);
+    btn.querySelector('.dot').className = 'dot dot-' + next;
+
+    updateSubPct(gk, sk);
+    var pct   = DATA.groups[gk].subgroups[sk].pct;
+    var color = pctColor(pct);
+
+    document.getElementById('progFill').style.width      = (pct * 100) + '%';
+    document.getElementById('progFill').style.background = color;
+    document.getElementById('progPct').textContent       = Math.round(pct * 100) + '%';
+    document.getElementById('progPct').style.color       = color;
+
+    document.querySelectorAll('.sub-tab').forEach(function (tab) {
+      if (tab.dataset.sk === sk) tab.querySelector('.tpct').textContent = Math.round(pct * 100) + '%';
+    });
+
+    updateGlobalBar();
+    markDirty();
+  }
+
+  // ── EVENTOS ───────────────────────────────────────
+  document.getElementById('adminBtn').addEventListener('click', openLogin);
+  document.getElementById('loginSubmitBtn').addEventListener('click', doLogin);
+  document.getElementById('loginCancelBtn').addEventListener('click', closeLogin);
+  document.getElementById('loginPass').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter')  doLogin();
+    if (e.key === 'Escape') closeLogin();
+  });
+  document.getElementById('logoutBtn').addEventListener('click', doLogout);
+  document.getElementById('saveBtn').addEventListener('click', saveData);
+  document.getElementById('backBtn').addEventListener('click', showSummary);
+
+  document.getElementById('taskTable').addEventListener('click', function (e) {
+    var btn = e.target.closest('.status-btn.editable');
+    if (btn) cycleStatus(btn);
+  });
+
+  document.querySelectorAll('.modal-overlay').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      if (e.target === el) el.classList.add('hidden');
+    });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay').forEach(function (m) { m.classList.add('hidden'); });
+    }
+  });
+
+  // ── INIT ──────────────────────────────────────────
+  dbLoad()
+    .then(function (data) {
+      DATA = data;
+      document.getElementById('loadingScreen').classList.add('hidden');
+      render();
+    })
+    .catch(function (err) {
+      DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+      document.getElementById('loadingScreen').classList.add('hidden');
+      render();
+      showToast('Error cargando datos: ' + err.message, 'err');
+    });
+
+}());
+</script>
+</body>
+</html>
