@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C806 — Commissioning</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      /* Ingeteam-inspired palette: deep navy + electric teal accent + warm off-white text */
+      --bg:          #0a0d14;
+      --surface:     #111827;
+      --surface2:    #1a2235;
+      --surface3:    #212d42;
+      --border:      #2c3a52;
+      --border2:     #3d4f6e;
+      --text:        #e2e8f0;
+      --text-dim:    #94a3b8;
+      --accent:      #0ea5c9;
+      --accent-dim:  rgba(14,165,201,0.10);
+      --accent-glow: rgba(14,165,201,0.25);
+      --green:       #10b981;
+      --green-dim:   rgba(16,185,129,0.10);
+      --amber:       #f59e0b;
+      --amber-dim:   rgba(245,158,11,0.10);
+      --red:         #ef4444;
+      --red-dim:     rgba(239,68,68,0.10);
+      --radius:      8px;
+      --radius-lg:   12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .hidden { display: none !important; }
+    button { font-family: 'Inter', sans-serif; cursor: pointer; }
+
+    /* ── MODALS ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.72);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 500; backdrop-filter: blur(4px);
+    }
+    .modal-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 32px 28px; width: 380px;
+      animation: fadeUp 0.16s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 5px; color: var(--text); }
+    .modal-sub   { font-size: 12px; color: var(--text-dim); margin-bottom: 22px; line-height: 1.5; }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block; font-size: 10px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px;
+    }
+    .field input {
+      width: 100%; padding: 9px 12px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text); font-size: 13px;
+      font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.15s;
+    }
+    .field input:focus { border-color: var(--accent); }
+    .field-error { font-size: 12px; color: var(--red); margin-top: 10px; min-height: 16px; text-align: center; }
+
+    .modal-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .btn-primary {
+      flex: 1; padding: 9px;
+      background: var(--accent); border: none; border-radius: var(--radius);
+      color: #fff; font-size: 13px; font-weight: 600; letter-spacing: 0.2px;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-ghost {
+      padding: 9px 16px;
+      background: none; border: 1px solid var(--border); border-radius: var(--radius);
+      color: var(--text-dim); font-size: 13px; transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px; height: 58px;
+      display: flex; align-items: center; gap: 0;
+      position: sticky; top: 0; z-index: 100;
+    }
+
+    /* Ingeteam logo — italic text close to original typeface */
+    .h-brand {
+      display: flex; align-items: center;
+      text-decoration: none; flex-shrink: 0;
+    }
+    .h-brand-text {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 24px;
+      color: #c8102e;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .h-divider {
+      width: 1px; height: 22px; background: var(--border);
+      margin: 0 20px; flex-shrink: 0;
+    }
+
+    .h-project { font-size: 13px; font-weight: 500; color: var(--text-dim); flex-shrink: 0; }
+
+    .h-global { display: flex; align-items: center; gap: 9px; margin-left: 24px; }
+    .h-global-label { font-size: 11px; color: var(--text-dim); }
+    .h-global-bar {
+      width: 80px; height: 2px;
+      background: var(--border); border-radius: 2px; overflow: hidden;
+    }
+    .h-global-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.6s; }
+    .h-global-pct {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: var(--accent); min-width: 34px;
+    }
+
+    .h-right { margin-left: auto; display: flex; align-items: center; gap: 7px; }
+
+    .save-status { font-size: 11px; color: var(--text-dim); }
+    .save-status.ok     { color: var(--green); }
+    .save-status.err    { color: var(--red); }
+    .save-status.saving { color: var(--amber); }
+
+    .h-save-btn {
+      display: flex; align-items: center; gap: 5px; padding: 5px 12px;
+      background: var(--green-dim); border: 1px solid rgba(16,185,129,0.3);
+      border-radius: var(--radius); color: var(--green); font-size: 12px; font-weight: 600;
+      transition: opacity 0.15s;
+    }
+    .h-save-btn:hover { opacity: 0.8; }
+    .h-save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .h-icon-btn {
+      width: 30px; height: 30px;
+      background: none; border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text-dim); font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .h-icon-btn:hover { color: var(--text); border-color: var(--border2); }
+
+    .h-admin-btn {
+      display: flex; align-items: center; gap: 5px; padding: 5px 11px;
+      background: none; border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text-dim); font-size: 12px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .h-admin-btn:hover { color: var(--text); border-color: var(--border2); }
+    .h-admin-btn.logged {
+      color: var(--amber); border-color: rgba(245,158,11,0.35);
+      background: var(--amber-dim);
+    }
+
+    /* ── LOADING ── */
+    #loadingScreen {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 14px; z-index: 200;
+    }
+    .spinner {
+      width: 28px; height: 28px; border: 2px solid var(--border);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loadingScreen p { font-size: 12px; color: var(--text-dim); letter-spacing: 0.5px; }
+
+    /* ── MAIN ── */
+    main { max-width: 1080px; margin: 0 auto; padding: 0 24px 60px; }
+
+    .section-label {
+      font-size: 10px; font-weight: 600; color: var(--text-dim);
+      letter-spacing: 1.4px; text-transform: uppercase; padding: 30px 0 14px;
+    }
+
+    /* ── SUMMARY GRID ── */
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+    .s-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 20px 20px 16px;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s, transform 0.15s;
+      position: relative; overflow: hidden;
+    }
+    .s-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--accent); opacity: 0; transition: opacity 0.15s;
+    }
+    .s-card:hover { border-color: var(--border2); background: var(--surface2); transform: translateY(-1px); }
+    .s-card:hover::before { opacity: 1; }
+
+    .s-card-name {
+      font-size: 13px; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; color: var(--text); margin-bottom: 6px;
+    }
+    .s-card-sub-count { font-size: 11px; color: var(--text-dim); margin-bottom: 16px; }
+    .s-pct-row   { display: flex; align-items: center; gap: 8px; }
+    .s-bar-wrap  { flex: 1; height: 3px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .s-bar-fill  { height: 100%; border-radius: 3px; transition: width 0.6s; }
+    .s-pct-num   {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; font-weight: 500; min-width: 30px; text-align: right;
+    }
+
+    /* ── DETAIL ── */
+    .detail-top { display: flex; align-items: center; gap: 12px; padding: 26px 0 20px; }
+    .back-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--text-dim); padding: 5px 12px; border-radius: var(--radius);
+      font-size: 12px; transition: color 0.15s, border-color 0.15s;
+    }
+    .back-btn:hover { color: var(--text); border-color: var(--border2); }
+    .detail-top h2 {
+      font-size: 18px; font-weight: 700; letter-spacing: 0.3px;
+      text-transform: uppercase; color: var(--text);
+    }
+
+    /* ── SUBGROUP CARDS ── */
+    .sub-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-bottom: 20px; }
+    .sub-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px 14px 12px;
+      cursor: pointer; transition: all 0.15s; position: relative;
+    }
+    .sub-card:hover { border-color: var(--border2); background: var(--surface3); }
+    .sub-card.active {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 0 0 1px var(--accent-glow);
+    }
+    .sub-card-name {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.3px;
+      color: var(--text); margin-bottom: 10px; line-height: 1.3;
+    }
+    .sub-card.active .sub-card-name { color: var(--accent); }
+    .sub-card-bar-wrap { height: 3px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+    .sub-card-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s; }
+    .sub-card-pct {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--text-dim);
+    }
+    .sub-card.active .sub-card-pct { color: var(--accent); }
+
+    /* ── PROG STRIP ── */
+    .prog-strip {
+      display: flex; align-items: center; gap: 14px; padding: 12px 16px; margin-bottom: 14px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    }
+    .prog-strip-label { font-size: 11px; color: var(--text-dim); letter-spacing: 0.3px; }
+    .prog-wrap { flex: 1; height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .prog-fill  { height: 100%; border-radius: 4px; transition: width 0.4s; }
+    .prog-pct   {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; font-weight: 600; min-width: 36px; text-align: right;
+    }
+
+    /* ── TASK TOOLBAR ── */
+    .task-toolbar {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
+    }
+    .toolbar-label { font-size: 11px; color: var(--text-dim); margin-right: 4px; }
+    .filter-btn {
+      padding: 5px 12px; border-radius: 20px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text-dim); font-size: 11px; font-weight: 500;
+      transition: all 0.15s;
+    }
+    .filter-btn:hover { border-color: var(--border2); color: var(--text); }
+    .filter-btn.active {
+      background: var(--accent); border-color: var(--accent); color: #fff;
+    }
+    .sort-btn {
+      margin-left: auto; padding: 5px 12px;
+      border: 1px solid var(--border); background: var(--surface);
+      border-radius: 20px; color: var(--text-dim); font-size: 11px; font-weight: 500;
+      display: flex; align-items: center; gap: 5px;
+      transition: all 0.15s;
+    }
+    .sort-btn:hover { border-color: var(--border2); color: var(--text); }
+    .sort-btn.active { border-color: var(--accent); color: var(--accent); }
+
+    /* ── TASK TABLE ── */
+    .task-table {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .t-head, .t-row { display: grid; align-items: center; padding: 10px 16px; }
+    .t-head { background: var(--surface2); border-bottom: 1px solid var(--border); }
+    .t-row  { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+    .t-row:last-child { border-bottom: none; }
+    .t-row:hover { background: var(--surface2); }
+    .t-row.faded { opacity: 0.35; }
+
+    .th {
+      font-size: 10px; font-weight: 600; color: var(--text-dim);
+      letter-spacing: 1px; text-transform: uppercase; text-align: center;
+    }
+    .th:first-child { text-align: left; }
+    .t-name { font-size: 13px; color: var(--text); }
+    .t-cell { display: flex; align-items: center; justify-content: center; }
+
+    /* Status indicators */
+    .status-wrap {
+      display: flex; align-items: center; justify-content: center;
+      width: 56px;
+    }
+    .status-chip {
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 4px; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.4px; padding: 3px 7px; white-space: nowrap;
+      transition: transform 0.1s;
+    }
+    .status-chip.done    { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+    .status-chip.pending { background: var(--surface2);  color: var(--text-dim); border: 1px solid var(--border); }
+    .status-chip.na      { background: var(--surface2);  color: var(--text-dim); border: 1px solid var(--border); font-style: italic; }
+
+    .status-chip.editable { cursor: pointer; }
+    .status-chip.editable:hover { transform: scale(1.06); }
+
+    /* legend */
+    .t-legend {
+      display: flex; gap: 16px; align-items: center; padding: 10px 16px; flex-wrap: wrap;
+      border-top: 1px solid var(--border); background: var(--surface2);
+    }
+    .t-legend span { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); }
+    .legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+    /* ── TASK ACTION BUTTONS (admin) ── */
+    .t-actions {
+      display: flex; align-items: center; gap: 4px; justify-content: flex-end;
+    }
+    .t-act-btn {
+      width: 24px; height: 24px; border-radius: 5px; border: none;
+      background: none; font-size: 12px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-dim); transition: background 0.12s, color 0.12s;
+      flex-shrink: 0;
+    }
+    .t-act-btn.edit:hover  { background: var(--accent-dim); color: var(--accent); }
+    .t-act-btn.del:hover   { background: var(--red-dim);    color: var(--red); }
+
+    .add-task-row {
+      display: flex; align-items: center; gap: 8px; padding: 10px 16px;
+      border-top: 1px solid var(--border); background: var(--surface2);
+    }
+    .add-task-input {
+      flex: 1; padding: 7px 11px;
+      background: var(--surface3); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text); font-size: 12px;
+      font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.15s;
+    }
+    .add-task-input:focus { border-color: var(--accent); }
+    .add-task-btn {
+      padding: 7px 14px; background: var(--accent); border: none;
+      border-radius: var(--radius); color: #fff; font-size: 12px; font-weight: 600;
+      transition: opacity 0.15s; white-space: nowrap;
+    }
+    .add-task-btn:hover { opacity: 0.85; }
+
+    /* Edit task modal */
+    #editTaskModal .modal-box { width: 420px; }
+    #toast {
+      position: fixed; bottom: 22px; right: 22px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 10px 16px;
+      font-size: 12px; color: var(--text);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+      transform: translateY(60px); opacity: 0;
+      transition: transform 0.2s, opacity 0.2s; z-index: 600;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.ok   { border-color: var(--green); color: var(--green); }
+    #toast.err  { border-color: var(--red);   color: var(--red); }
+  </style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+  <div class="spinner"></div>
+  <p>Cargando datos…</p>
+</div>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-title">Acceso administrador</div>
+    <div class="modal-sub">Introduce la contraseña para activar el modo edición.</div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="loginSubmitBtn">Entrar</button>
+      <button class="btn-ghost" id="loginCancelBtn">Cancelar</button>
+    </div>
+    <div class="field-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- EDIT TASK MODAL -->
+<div id="editTaskModal" class="modal-overlay hidden">
+  <div class="modal-box" style="width:420px">
+    <div class="modal-title">Editar tarea</div>
+    <div class="modal-sub">Modifica el nombre de la tarea.</div>
+    <div class="field">
+      <label>Nombre de la tarea</label>
+      <input id="editTaskInput" type="text" placeholder="Nombre de la tarea" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="editTaskSaveBtn">Guardar</button>
+      <button class="btn-ghost" id="editTaskCancelBtn">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+
+<header>
+  <a class="h-brand" href="#">
+    <span class="h-brand-text">Ingeteam</span>
+  </a>
+  <div class="h-divider"></div>
+  <span class="h-project">C806 Commissioning</span>
+  <div class="h-global">
+    <span class="h-global-label">GLOBAL</span>
+    <div class="h-global-bar"><div class="h-global-fill" id="hGlobalFill"></div></div>
+    <span class="h-global-pct" id="hGlobalPct"></span>
+  </div>
+  <div class="h-right">
+    <span class="save-status" id="saveStatus"></span>
+    <button class="h-save-btn hidden" id="saveBtn">↑ Guardar</button>
+    <button class="h-icon-btn hidden" id="logoutBtn" title="Cerrar sesión">⏻</button>
+    <button class="h-admin-btn" id="adminBtn">🔒 Admin</button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+  <div id="summaryView">
+    <div class="section-label">Sistemas</div>
+    <div class="summary-grid" id="summaryGrid"></div>
+  </div>
+
+  <div id="detailView" class="hidden">
+    <div class="detail-top">
+      <button class="back-btn" id="backBtn">← Volver</button>
+      <h2 id="detailTitle"></h2>
+    </div>
+
+    <div class="section-label" style="padding-top:0">Subgrupos</div>
+    <div class="sub-cards" id="subCards"></div>
+
+    <div class="prog-strip">
+      <span class="prog-strip-label">COMPLETADO</span>
+      <div class="prog-wrap"><div class="prog-fill" id="progFill"></div></div>
+      <span class="prog-pct" id="progPct"></span>
+    </div>
+
+    <div class="task-toolbar">
+      <span class="toolbar-label">Filtrar:</span>
+      <button class="filter-btn active" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="pending">Pendientes</button>
+      <button class="filter-btn" data-filter="done">Completados</button>
+      <button class="sort-btn" id="sortBtn" title="Ordenar por estado">⇅ Ordenar por estado</button>
+    </div>
+
+    <div class="task-table" id="taskTable"></div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+(function () {
+
+  var ADMIN_PASSWORD = 'c806admin';
+  var SUPABASE_URL   = 'https://kcoohyaubmpyngsvfgyv.supabase.co';
+  var SUPABASE_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtjb29oeWF1Ym1weW5nc3ZmZ3l2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MTM2MjAsImV4cCI6MjA5ODE4OTYyMH0.cpeJ2N1OwCfIa9LTC3CowbNt0G9tAFtU0--mupM4w0g';
+  var TABLE          = 'commissioning_data';
+  var API            = SUPABASE_URL + '/rest/v1/' + TABLE;
+  var HEADERS        = {
+    'apikey':        SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY,
+    'Content-Type':  'application/json',
+    'Prefer':        'return=representation'
+  };
+
+  var isAdmin         = false;
+  var DATA            = null;
+  var dirty           = false;
+  var currentGroup    = null;
+  var currentSubgroup = null;
+  var currentFilter   = 'all';
+  var sortByStatus    = false;
+  var toastTimer      = null;
+  var CYCLE           = { pending: 'done', done: 'na', na: 'pending' };
+
+  // ── DEFAULT DATA ─────────────────────────────────
+  var DEFAULT_DATA = {
+    meta: { project: 'C806', lastUpdated: '' },
+    groups: {
+      SWITCHBOARDS: {
+        label: 'SWITCHBOARDS',
+        subgroups: {
+          'MAIN SWITCHBOARD 440': {
+            pct: 0.85, columns: ['Estado'],
+            tasks: [
+              { name: 'Emenasa - interconexión cuadros', values: ['done'] },
+              { name: 'Aislamiento barras', values: ['done'] },
+              { name: 'Ajuste fuentes de alimentación', values: ['done'] },
+              { name: 'MTR configurados', values: ['done'] },
+              { name: 'DEIF configurados', values: ['done'] },
+              { name: 'Cableado potencia check', values: ['done'] },
+              { name: '24Vdc UPS', values: ['done'] },
+              { name: '230Vac heaters P5', values: ['done'] },
+              { name: 'Añadir bornas resis + cableado', values: ['done'] },
+              { name: 'Placa características y pegatinas', values: ['done'] },
+              { name: 'AVR y relé diferencial incluido externo', values: ['pending'] },
+              { name: 'CAN y ethernet a ESB', values: ['done'] },
+              { name: 'Primera energización', values: ['done'] },
+              { name: 'Protecciones DEIF', values: ['done'] },
+              { name: 'Protecciones ABB', values: ['done'] },
+              { name: 'Digitales con IAS', values: ['done'] },
+              { name: 'Interfaces engines', values: ['pending'] },
+              { name: 'Instalar conversor fibra a TCP', values: ['done'] },
+              { name: 'Fibra a RAB', values: ['pending'] },
+              { name: '24Vdc Generadores ajustada', values: ['done'] }
+            ]
+          },
+          'REMOTE ACCESS BOX': {
+            pct: 0.27, columns: ['Estado'],
+            tasks: [
+              { name: 'Modificación router', values: ['pending'] },
+              { name: '230Vac principal', values: ['done'] },
+              { name: '230Vac luces', values: ['done'] },
+              { name: '24Vdc UPS', values: ['done'] },
+              { name: 'Fibra EMS', values: ['pending'] },
+              { name: 'Fibra PMS', values: ['pending'] },
+              { name: 'Fibra Multidrive', values: ['pending'] },
+              { name: 'Fibras MP drives', values: ['pending'] },
+              { name: 'Fibra Bow drive', values: ['pending'] },
+              { name: 'Fibra Swing-up drive', values: ['pending'] },
+              { name: 'Digitales con EMS', values: ['pending'] }
+            ]
+          }
+        }
+      },
+      DRIVES: {
+        label: 'DRIVES',
+        subgroups: {
+          'MAIN PROPULSION PS': {
+            pct: 0.63, columns: ['PS'],
+            tasks: [
+              { name: 'WCU llenado', values: ['done'] },
+              { name: 'Sentido rotación bombas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'Agua primario', values: ['pending'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'FW cargado', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'Aislamiento cables GSC', values: ['done'] },
+              { name: 'Alimentación auxiliar 440V', values: ['done'] },
+              { name: 'Digitales con MCB', values: ['done'] },
+              { name: 'E-stops', values: ['done'] },
+              { name: 'Fibra RAB', values: ['pending'] },
+              { name: 'Firewall', values: ['pending'] },
+              { name: 'Comms. TCP con IAS', values: ['done'] },
+              { name: 'Primera energización GSC', values: ['done'] },
+              { name: 'Primera energización MSC', values: ['pending'] },
+              { name: 'Digitales con IAS', values: ['done'] },
+              { name: 'Señales con PMS', values: ['done'] },
+              { name: 'Shutdown WB', values: ['done'] }
+            ]
+          },
+          'MAIN PROPULSION SB': {
+            pct: 0.63, columns: ['SB'],
+            tasks: [
+              { name: 'WCU llenado', values: ['done'] },
+              { name: 'Sentido rotación bombas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'Agua primario', values: ['pending'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'FW cargado', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'Aislamiento cables GSC', values: ['done'] },
+              { name: 'Alimentación auxiliar 440V', values: ['done'] },
+              { name: 'Digitales con MCB', values: ['done'] },
+              { name: 'E-stops', values: ['done'] },
+              { name: 'Fibra RAB', values: ['pending'] },
+              { name: 'Firewall', values: ['pending'] },
+              { name: 'Comms. TCP con IAS', values: ['done'] },
+              { name: 'Primera energización GSC', values: ['done'] },
+              { name: 'Primera energización MSC', values: ['pending'] },
+              { name: 'Digitales con IAS', values: ['done'] },
+              { name: 'Señales con PMS', values: ['done'] },
+              { name: 'Shutdown WB', values: ['done'] }
+            ]
+          },
+          'BOW': {
+            pct: 0.77, columns: ['Estado'],
+            tasks: [
+              { name: 'WCU llenado', values: ['done'] },
+              { name: 'Sentido rotación bombas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'FW cargado', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'Agua primario', values: ['pending'] },
+              { name: 'Aislamiento cables GSC', values: ['done'] },
+              { name: 'Alimentación auxiliar 440V', values: ['done'] },
+              { name: 'MCB', values: ['done'] },
+              { name: 'E-stops', values: ['done'] },
+              { name: 'Fibra RAB', values: ['done'] },
+              { name: 'Firewall instalado', values: ['done'] },
+              { name: 'Comms. TCP con IAS', values: ['done'] },
+              { name: 'Primera energización GSC', values: ['done'] },
+              { name: 'Primera energización MSC', values: ['done'] },
+              { name: 'Ajuste IF y VC vacío', values: ['done'] },
+              { name: 'Ajuste en carga', values: ['pending'] },
+              { name: 'PT100 Motor winding + bearing', values: ['done'] },
+              { name: 'Safeties temperaturas motor', values: ['pending'] },
+              { name: 'Digitales con IAS', values: ['done'] },
+              { name: 'Señales con PMS', values: ['done'] }
+            ]
+          },
+          'SWING-UP THR.': {
+            pct: 0.7, columns: ['Estado'],
+            tasks: [
+              { name: 'WCU llenado', values: ['done'] },
+              { name: 'Sentido rotación bombas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'Encoder 1', values: ['pending'] },
+              { name: 'FW cargado', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'Agua primario', values: ['pending'] },
+              { name: 'Aislamiento cables GSC', values: ['done'] },
+              { name: 'Alimentación auxiliar 440V', values: ['done'] },
+              { name: 'MCB', values: ['done'] },
+              { name: 'E-stops', values: ['done'] },
+              { name: 'Fibra RAB', values: ['done'] },
+              { name: 'Firewall instalado', values: ['done'] },
+              { name: 'Comms. TCP con IAS', values: ['done'] },
+              { name: 'Primera energización GSC', values: ['done'] },
+              { name: 'Primera energización MSC', values: ['pending'] },
+              { name: 'PT100 Motor winding + bearing', values: ['done'] },
+              { name: 'Safeties temperaturas motor', values: ['pending'] },
+              { name: 'Digitales con IAS', values: ['done'] },
+              { name: 'Señales con PMS', values: ['done'] }
+            ]
+          },
+          'MULTIDRIVE': {
+            pct: 0.5, columns: ['Estado'],
+            tasks: [
+              { name: 'WCU llenado', values: ['done'] },
+              { name: 'Sentido rotación bombas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'Agua primario', values: ['pending'] },
+              { name: 'FW cargado', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'Aislamiento cables GSC', values: ['done'] },
+              { name: 'Alimentación auxiliar 440V', values: ['done'] },
+              { name: 'Medida Vrst', values: ['done'] },
+              { name: 'Medida Vshore', values: ['pending'] },
+              { name: 'MCB', values: ['done'] },
+              { name: 'E-stops', values: ['pending'] },
+              { name: 'Bender configurado', values: ['done'] },
+              { name: 'Weidmuller - 10.100.1.196', values: ['done'] },
+              { name: 'Fibra RAB', values: ['pending'] },
+              { name: 'Comms. TCP con EMS', values: ['done'] },
+              { name: 'Firewall', values: ['pending'] },
+              { name: 'Tª trafo cabecera (1 devanado)', values: ['done'] },
+              { name: 'Tª trafo shore (1 devanado)', values: ['done'] },
+              { name: 'Comms. TCP con IAS', values: ['done'] },
+              { name: 'Digitales con IAS', values: ['done'] },
+              { name: 'Digitales/Analogicas con EMS', values: ['done'] },
+              { name: 'Primera energización GSC1', values: ['pending'] },
+              { name: 'Primera energización GSC2', values: ['pending'] },
+              { name: 'Primera energización DCDC', values: ['pending'] },
+              { name: 'Safeties por Tª trafos', values: ['pending'] }
+            ]
+          }
+        }
+      },
+      AUTOMATION: {
+        label: 'AUTOMATION',
+        subgroups: {
+          'PMS': {
+            pct: 0.68, columns: ['Estado'],
+            tasks: [
+              { name: 'Alimentación control', values: ['done'] },
+              { name: 'SW cargado', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'Canales CAN', values: ['done'] },
+              { name: 'Anillo ethernet', values: ['done'] },
+              { name: 'Comms. RTU IAS 1', values: ['done'] },
+              { name: 'Comms. RTU IAS 2', values: ['pending'] },
+              { name: 'Comms. RTU con EMS', values: ['done'] },
+              { name: '24Vdc en ESB', values: ['done'] },
+              { name: 'Señales con MSB', values: ['done'] },
+              { name: 'Señales con Gens', values: ['pending'] },
+              { name: 'Señales ESB', values: ['pending'] },
+              { name: 'Señales con drives MP', values: ['done'] },
+              { name: 'Señales con drives proa', values: ['done'] },
+              { name: 'Señales con EMS', values: ['pending'] },
+              { name: 'Maniobras Gen 1', values: ['done'] },
+              { name: 'Maniobras Gen 2', values: ['done'] },
+              { name: 'Maniobras Gen 3', values: ['done'] },
+              { name: 'Maniobras BTB', values: ['done'] }
+            ]
+          },
+          'EMS': {
+            pct: 0.56, columns: ['Estado'],
+            tasks: [
+              { name: 'SW cargado', values: ['done'] },
+              { name: '230Vac emergencia', values: ['done'] },
+              { name: '24Vdc', values: ['done'] },
+              { name: '230Vac heater & light', values: ['done'] },
+              { name: 'HMI cargado', values: ['done'] },
+              { name: 'E-stop', values: ['pending'] },
+              { name: 'Comms. RTU con PMS', values: ['done'] },
+              { name: 'Comms. TCP con BMS', values: ['pending'] },
+              { name: 'Comms. RTU con IAS', values: ['done'] },
+              { name: 'Comms. TCP con Mdrive (MOXA)', values: ['done'] },
+              { name: 'Ajuste fuentes de alimentación', values: ['done'] },
+              { name: 'Fibra RAB', values: ['pending'] },
+              { name: 'Señales con FC', values: ['done'] },
+              { name: 'Señales con IAS', values: ['pending'] },
+              { name: 'Señales con PMS', values: ['done'] },
+              { name: 'Señales con DP', values: ['pending'] },
+              { name: 'Señales con RAB', values: ['pending'] },
+              { name: 'Pruebas funcionales', values: ['pending'] }
+            ]
+          },
+          'SAFETY SYSTEM PS': {
+            pct: 0.73, columns: ['PS'],
+            tasks: [
+              { name: 'Relé K05 y cableado', values: ['pending'] },
+              { name: 'HMI', values: ['done'] },
+              { name: '230Vac emergencia', values: ['done'] },
+              { name: '24Vdc principal', values: ['done'] },
+              { name: '230Vac heater & light', values: ['done'] },
+              { name: 'SW cargado', values: ['done'] },
+              { name: 'PT100 motor', values: ['done'] },
+              { name: 'Señales con drive', values: ['done'] },
+              { name: 'Señales con IAS', values: ['done'] },
+              { name: 'Shutdown WB', values: ['done'] },
+              { name: 'Botón override (NC)', values: ['done'] },
+              { name: 'Comms. RTU PCS/IAS', values: ['na'] },
+              { name: 'Reset de IAS', values: ['pending'] },
+              { name: 'Water leakage', values: ['done'] },
+              { name: 'Safeties', values: ['pending'] }
+            ]
+          },
+          'SAFETY SYSTEM SB': {
+            pct: 0.73, columns: ['SB'],
+            tasks: [
+              { name: 'Relé K05 y cableado', values: ['pending'] },
+              { name: 'HMI', values: ['done'] },
+              { name: '230Vac emergencia', values: ['done'] },
+              { name: '24Vdc principal', values: ['done'] },
+              { name: '230Vac heater & light', values: ['done'] },
+              { name: 'SW cargado', values: ['done'] },
+              { name: 'PT100 motor', values: ['done'] },
+              { name: 'Señales con drive', values: ['done'] },
+              { name: 'Señales con IAS', values: ['done'] },
+              { name: 'Shutdown WB', values: ['done'] },
+              { name: 'Botón override (NC)', values: ['done'] },
+              { name: 'Comms. RTU PCS/IAS', values: ['na'] },
+              { name: 'Reset de IAS', values: ['pending'] },
+              { name: 'Water leakage', values: ['done'] },
+              { name: 'Safeties', values: ['pending'] }
+            ]
+          }
+        }
+      },
+      MOTORS: {
+        label: 'MOTORS',
+        subgroups: {
+          'MAIN PROP PS': {
+            pct: 0.73, columns: ['PS'],
+            tasks: [
+              { name: 'Datasheet', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Alineación', values: ['pending'] },
+              { name: 'Faseado y pantallas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['pending'] },
+              { name: 'PT100 winding', values: ['done'] },
+              { name: 'PT100 bearing DE & NDE', values: ['done'] },
+              { name: 'PT100 water IN & OUT', values: ['na'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'Heaters - 225Vac MSB', values: ['done'] },
+              { name: 'Tuberías cooling', values: ['done'] },
+              { name: 'Water leakage 24Vdc', values: ['done'] },
+              { name: 'Water leakage contacto', values: ['done'] },
+              { name: 'Primera energización', values: ['pending'] }
+            ]
+          },
+          'MAIN PROP SB': {
+            pct: 0.73, columns: ['SB'],
+            tasks: [
+              { name: 'Datasheet', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Alineación', values: ['pending'] },
+              { name: 'Faseado y pantallas', values: ['done'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'PT100 winding', values: ['done'] },
+              { name: 'PT100 bearing DE & NDE', values: ['done'] },
+              { name: 'PT100 water IN & OUT', values: ['na'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'Heaters - 225Vac MSB', values: ['done'] },
+              { name: 'Tuberías cooling', values: ['done'] },
+              { name: 'Water leakage 24Vdc', values: ['done'] },
+              { name: 'Water leakage contacto', values: ['done'] },
+              { name: 'Primera energización', values: ['pending'] }
+            ]
+          },
+          'BOW': {
+            pct: 0.85, columns: ['Estado'],
+            tasks: [
+              { name: 'Circuito eq. y datasheet', values: ['done'] },
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'Faseado y pantallas', values: ['done'] },
+              { name: 'Alineación', values: ['pending'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'Desacoplado', values: ['done'] },
+              { name: 'PT100', values: ['done'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'Heaters - 225Vac MSB', values: ['done'] },
+              { name: 'Tuberías cooling', values: ['done'] },
+              { name: 'Primera energización', values: ['done'] },
+              { name: 'Water leakage a IAS', values: ['pending'] }
+            ]
+          },
+          'SWING-UP THR.': {
+            pct: 0.58, columns: ['Estado'],
+            tasks: [
+              { name: 'Circuito eq. y datasheet', values: ['done'] },
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'Faseado y pantallas', values: ['done'] },
+              { name: 'Alineación', values: ['pending'] },
+              { name: 'Tierra instalación', values: ['done'] },
+              { name: 'PT100', values: ['done'] },
+              { name: 'Encoder 1', values: ['done'] },
+              { name: 'Heaters - 225Vac MSB', values: ['done'] },
+              { name: 'Tuberías cooling', values: ['done'] },
+              { name: 'Primera energización', values: ['pending'] },
+              { name: 'Water leakage a IAS', values: ['pending'] }
+            ]
+          }
+        }
+      },
+      TRAFOS: {
+        label: 'TRAFOS',
+        subgroups: {
+          'HOTEL PS': {
+            pct: 0.83, columns: ['PS'],
+            tasks: [
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'PT100 al IAS', values: ['done'] },
+              { name: '220Vac heaters - MSB', values: ['done'] },
+              { name: 'Primera energización', values: ['done'] },
+              { name: 'Alarmas H & HH en IAS', values: ['pending'] }
+            ]
+          },
+          'HOTEL SB': {
+            pct: 0.83, columns: ['SB'],
+            tasks: [
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'PT100 al IAS', values: ['done'] },
+              { name: '220Vac heaters - MSB', values: ['done'] },
+              { name: 'Primera energización', values: ['done'] },
+              { name: 'Alarmas H & HH en IAS', values: ['pending'] }
+            ]
+          },
+          'MULTIDRIVE': {
+            pct: 0.6, columns: ['Estado'],
+            tasks: [
+              { name: 'Aislamiento cables', values: ['done'] },
+              { name: 'Aislamiento windings', values: ['done'] },
+              { name: 'PT100', values: ['done'] },
+              { name: '220Vac heaters desde MSB', values: ['done'] },
+              { name: 'Primera energización', values: ['pending'] }
+            ]
+          },
+          'SHORE': {
+            pct: 0.17, columns: ['Estado'],
+            tasks: [
+              { name: 'Aislamiento cables', values: ['pending'] },
+              { name: 'Aislamiento windings', values: ['pending'] },
+              { name: 'PT100', values: ['done'] },
+              { name: '220Vac heaters', values: ['pending'] },
+              { name: 'Links 1 a 1', values: ['pending'] },
+              { name: 'Primera energización', values: ['pending'] }
+            ]
+          }
+        }
+      }
+    }
+  };
+
+  // ── SUPABASE ─────────────────────────────────────
+  function dbLoad() {
+    return fetch(API + '?id=eq.1&select=data', { headers: HEADERS })
+      .then(function (r) { return r.json(); })
+      .then(function (rows) {
+        if (rows && rows.length && rows[0].data && rows[0].data.groups) {
+          return rows[0].data;
+        }
+        return dbSave(DEFAULT_DATA).then(function () { return DEFAULT_DATA; });
+      });
+  }
+
+  function dbSave(dataObj) {
+    dataObj.meta.lastUpdated = new Date().toISOString();
+    return fetch(API + '?id=eq.1', {
+      method: 'PATCH',
+      headers: HEADERS,
+      body: JSON.stringify({ data: dataObj, updated_at: new Date().toISOString() })
+    }).then(function (r) {
+      if (!r.ok) return r.text().then(function (t) { throw new Error(t); });
+    });
+  }
+
+  // ── HELPERS ──────────────────────────────────────
+  function pctColor(p) {
+    if (p >= 0.75) return 'var(--green)';
+    if (p >= 0.40) return 'var(--amber)';
+    return 'var(--red)';
+  }
+  function calcGroupPct(k) {
+    var subs = Object.values(DATA.groups[k].subgroups);
+    return subs.reduce(function (a, v) { return a + v.pct; }, 0) / subs.length;
+  }
+  function calcSubPct(sub) {
+    var el = sub.tasks.filter(function (t) { return t.values[0] !== 'na'; });
+    if (!el.length) return 0;
+    return el.filter(function (t) { return t.values[0] === 'done'; }).length / el.length;
+  }
+  function updateSubPct(gk, sk) {
+    DATA.groups[gk].subgroups[sk].pct = Math.round(calcSubPct(DATA.groups[gk].subgroups[sk]) * 100) / 100;
+  }
+  function updateGlobalBar() {
+    var keys = Object.keys(DATA.groups);
+    var avg  = keys.reduce(function (a, k) { return a + calcGroupPct(k); }, 0) / keys.length;
+    document.getElementById('hGlobalFill').style.width = (avg * 100) + '%';
+    document.getElementById('hGlobalPct').textContent  = Math.round(avg * 100) + '%';
+  }
+  function setSaveStatus(text, cls) {
+    var el = document.getElementById('saveStatus');
+    el.textContent = text; el.className = 'save-status ' + cls;
+  }
+  function markDirty() {
+    if (!dirty) {
+      dirty = true;
+      document.getElementById('saveBtn').classList.remove('hidden');
+      setSaveStatus('Cambios sin guardar', 'err');
+    }
+  }
+  function showToast(msg, type) {
+    var el = document.getElementById('toast');
+    el.textContent = msg; el.className = 'show ' + (type || '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.className = ''; }, 3200);
+  }
+
+  // ── LOGIN ─────────────────────────────────────────
+  function openLogin() {
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginError').textContent = '';
+    document.getElementById('loginModal').classList.remove('hidden');
+    setTimeout(function () { document.getElementById('loginPass').focus(); }, 80);
+  }
+  function closeLogin() { document.getElementById('loginModal').classList.add('hidden'); }
+  function doLogin() {
+    var pass = document.getElementById('loginPass').value;
+    if (pass === ADMIN_PASSWORD) {
+      isAdmin = true; closeLogin();
+      var btn = document.getElementById('adminBtn');
+      btn.classList.add('logged'); btn.textContent = '✓ Admin';
+      document.getElementById('logoutBtn').classList.remove('hidden');
+      if (currentSubgroup) renderTasks(currentGroup, currentSubgroup);
+      showToast('Modo edición activado', 'ok');
+    } else {
+      document.getElementById('loginError').textContent = 'Contraseña incorrecta.';
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginPass').focus();
+    }
+  }
+  function doLogout() {
+    isAdmin = false; dirty = false;
+    var btn = document.getElementById('adminBtn');
+    btn.classList.remove('logged'); btn.textContent = '🔒 Admin';
+    document.getElementById('logoutBtn').classList.add('hidden');
+    document.getElementById('saveBtn').classList.add('hidden');
+    setSaveStatus('', '');
+    if (currentSubgroup) renderTasks(currentGroup, currentSubgroup);
+    showToast('Sesión cerrada', '');
+  }
+
+  // ── SAVE ─────────────────────────────────────────
+  function saveData() {
+    var btn = document.getElementById('saveBtn');
+    btn.disabled = true; setSaveStatus('Guardando…', 'saving');
+    dbSave(DATA)
+      .then(function () {
+        dirty = false; btn.classList.add('hidden');
+        setSaveStatus('Guardado ✓', 'ok');
+        showToast('Cambios guardados en la nube ✓', 'ok');
+      })
+      .catch(function (e) {
+        setSaveStatus('Error al guardar', 'err');
+        showToast('Error: ' + e.message, 'err');
+      })
+      .finally(function () { btn.disabled = false; });
+  }
+
+  // ── RENDER ────────────────────────────────────────
+  function render() { updateGlobalBar(); renderSummary(); }
+
+  function renderSummary() {
+    var grid = document.getElementById('summaryGrid');
+    grid.innerHTML = '';
+    Object.keys(DATA.groups).forEach(function (key) {
+      var group = DATA.groups[key];
+      var avg   = calcGroupPct(key);
+      var color = pctColor(avg);
+      var subCount = Object.keys(group.subgroups).length;
+      var card  = document.createElement('div');
+      card.className = 's-card';
+      card.innerHTML =
+        '<div class="s-card-name">' + key + '</div>' +
+        '<div class="s-card-sub-count">' + subCount + ' subgrupo' + (subCount !== 1 ? 's' : '') + '</div>' +
+        '<div class="s-pct-row">' +
+          '<div class="s-bar-wrap"><div class="s-bar-fill" style="width:' + (avg*100) + '%;background:' + color + '"></div></div>' +
+          '<span class="s-pct-num" style="color:' + color + '">' + Math.round(avg*100) + '%</span>' +
+        '</div>';
+      card.addEventListener('click', function () { showDetail(key); });
+      grid.appendChild(card);
+    });
+  }
+
+  function showDetail(groupKey) {
+    currentGroup = groupKey;
+    var group    = DATA.groups[groupKey];
+    document.getElementById('summaryView').classList.add('hidden');
+    document.getElementById('detailView').classList.remove('hidden');
+    document.getElementById('detailTitle').textContent = group.label || groupKey;
+    currentFilter = 'all'; sortByStatus = false;
+    document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
+    document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+    document.getElementById('sortBtn').classList.remove('active');
+    renderSubCards(groupKey);
+    currentSubgroup = Object.keys(group.subgroups)[0];
+    renderTasks(groupKey, currentSubgroup);
+  }
+
+  function renderSubCards(groupKey) {
+    var group   = DATA.groups[groupKey];
+    var subkeys = Object.keys(group.subgroups);
+    var wrap    = document.getElementById('subCards');
+    wrap.innerHTML = '';
+    subkeys.forEach(function (sk, i) {
+      var sub   = group.subgroups[sk];
+      var color = pctColor(sub.pct);
+      var card  = document.createElement('div');
+      card.className = 'sub-card' + (i === 0 ? ' active' : '');
+      card.dataset.sk = sk;
+      card.innerHTML =
+        '<div class="sub-card-name">' + sk + '</div>' +
+        '<div class="sub-card-bar-wrap"><div class="sub-card-bar-fill" style="width:' + (sub.pct*100) + '%;background:' + color + '"></div></div>' +
+        '<div class="sub-card-pct">' + Math.round(sub.pct*100) + '%</div>';
+      card.addEventListener('click', function () {
+        document.querySelectorAll('.sub-card').forEach(function (c) { c.classList.remove('active'); });
+        card.classList.add('active');
+        currentSubgroup = sk;
+        renderTasks(groupKey, sk);
+      });
+      wrap.appendChild(card);
+    });
+  }
+
+  function showSummary() {
+    document.getElementById('summaryView').classList.remove('hidden');
+    document.getElementById('detailView').classList.add('hidden');
+    currentGroup = null; currentSubgroup = null;
+    renderSummary(); updateGlobalBar();
+  }
+
+  function getStatusOrder(v) { return v === 'pending' ? 0 : v === 'done' ? 1 : 2; }
+
+  function colHeader(col) {
+    // Always show ESTADO instead of PS / SB
+    if (col === 'PS' || col === 'SB') return 'ESTADO';
+    return col;
+  }
+
+  function renderTasks(groupKey, subKey) {
+    currentSubgroup = subKey;
+    var sub   = DATA.groups[groupKey].subgroups[subKey];
+    var pct   = sub.pct;
+    var color = pctColor(pct);
+
+    document.getElementById('progFill').style.width      = (pct*100) + '%';
+    document.getElementById('progFill').style.background = color;
+    document.getElementById('progPct').textContent       = Math.round(pct*100) + '%';
+    document.getElementById('progPct').style.color       = color;
+
+    var cols       = sub.columns;
+    var adminCols  = isAdmin ? ' 64px' : '';  // extra col for actions
+    var tpl        = '1fr ' + cols.map(function () { return '90px'; }).join(' ') + adminCols;
+
+    // Build task list with original indices, apply sort
+    var indexed = sub.tasks.map(function (t, i) { return { task: t, idx: i }; });
+    if (sortByStatus) {
+      indexed = indexed.slice().sort(function (a, b) {
+        return getStatusOrder(a.task.values[0]) - getStatusOrder(b.task.values[0]);
+      });
+    }
+
+    var html = '<div class="t-head" style="grid-template-columns:' + tpl + '">' +
+      '<div class="th">Tarea</div>' +
+      cols.map(function (c) { return '<div class="th">' + colHeader(c) + '</div>'; }).join('') +
+      (isAdmin ? '<div class="th"></div>' : '') +
+      '</div>';
+
+    indexed.forEach(function (item) {
+      var task = item.task;
+      var ti   = item.idx;
+      var v    = task.values[0];
+
+      var show = currentFilter === 'all' ||
+                 (currentFilter === 'done'    && v === 'done') ||
+                 (currentFilter === 'pending' && v === 'pending');
+
+      var labelMap = { done: '✓ OK', pending: 'PEND.', na: 'N.A.' };
+
+      var cells = task.values.map(function (v2, vi) {
+        var label = labelMap[v2] || v2;
+        if (isAdmin) {
+          return '<div class="t-cell"><span class="status-wrap">' +
+            '<button class="status-chip ' + v2 + ' editable" data-v="' + v2 +
+            '" data-ti="' + ti + '" data-vi="' + vi +
+            '" data-gk="' + groupKey + '" data-sk="' + subKey + '">' +
+            label + '</button></span></div>';
+        }
+        return '<div class="t-cell"><span class="status-wrap"><span class="status-chip ' + v2 + '">' + label + '</span></span></div>';
+      }).join('');
+
+      var actionCell = isAdmin
+        ? '<div class="t-actions">' +
+            '<button class="t-act-btn edit" title="Editar tarea" data-act="edit" data-ti="' + ti + '" data-gk="' + groupKey + '" data-sk="' + subKey + '">✏</button>' +
+            '<button class="t-act-btn del"  title="Eliminar tarea" data-act="del" data-ti="' + ti + '" data-gk="' + groupKey + '" data-sk="' + subKey + '">✕</button>' +
+          '</div>'
+        : '';
+
+      html += '<div class="t-row' + (show ? '' : ' faded') + '" style="grid-template-columns:' + tpl + '">' +
+        '<div class="t-name">' + task.name + '</div>' + cells + actionCell + '</div>';
+    });
+
+    html += '<div class="t-legend">' +
+      '<span><span class="legend-dot" style="background:var(--green)"></span> Completado</span>' +
+      '<span><span class="legend-dot" style="background:var(--border2)"></span> Pendiente</span>' +
+      '<span><span class="legend-dot" style="background:var(--text-dim)"></span> N.A.</span>' +
+      (isAdmin ? '<span style="margin-left:auto;color:var(--accent);font-size:10px;letter-spacing:0.3px">MODO EDICIÓN ACTIVO</span>' : '') +
+      '</div>';
+
+    // Add-task row (admin only)
+    if (isAdmin) {
+      html += '<div class="add-task-row">' +
+        '<input class="add-task-input" id="addTaskInput" type="text" placeholder="Nueva tarea…" />' +
+        '<button class="add-task-btn" id="addTaskBtn">+ Añadir</button>' +
+        '</div>';
+    }
+
+    document.getElementById('taskTable').innerHTML = html;
+
+    // Wire add-task
+    if (isAdmin) {
+      document.getElementById('addTaskBtn').addEventListener('click', function () {
+        addTask(groupKey, subKey);
+      });
+      document.getElementById('addTaskInput').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') addTask(groupKey, subKey);
+      });
+    }
+  }
+
+  // ── CYCLE STATUS ─────────────────────────────────
+  function cycleStatus(btn) {
+    var gk   = btn.dataset.gk; var sk = btn.dataset.sk;
+    var ti   = parseInt(btn.dataset.ti, 10); var vi = parseInt(btn.dataset.vi, 10);
+    var task = DATA.groups[gk].subgroups[sk].tasks[ti];
+    var next = CYCLE[task.values[vi]];
+    task.values[vi] = next;
+
+    var labelMap = { done: '✓ OK', pending: 'PEND.', na: 'N.A.' };
+    btn.setAttribute('data-v', next);
+    btn.className = 'status-chip ' + next + ' editable';
+    btn.textContent = labelMap[next];
+
+    updateSubPct(gk, sk);
+    var pct = DATA.groups[gk].subgroups[sk].pct;
+    var col = pctColor(pct);
+
+    document.getElementById('progFill').style.width      = (pct*100) + '%';
+    document.getElementById('progFill').style.background = col;
+    document.getElementById('progPct').textContent       = Math.round(pct*100) + '%';
+    document.getElementById('progPct').style.color       = col;
+
+    // Update sub-card
+    var card = document.querySelector('.sub-card[data-sk="' + sk + '"]');
+    if (card) {
+      card.querySelector('.sub-card-bar-fill').style.width = (pct*100) + '%';
+      card.querySelector('.sub-card-bar-fill').style.background = col;
+      card.querySelector('.sub-card-pct').textContent = Math.round(pct*100) + '%';
+    }
+
+    updateGlobalBar();
+    markDirty();
+  }
+
+
+  // ── ADD TASK ─────────────────────────────────────
+  function addTask(gk, sk) {
+    var input = document.getElementById('addTaskInput');
+    var name  = input.value.trim();
+    if (!name) { input.focus(); return; }
+    DATA.groups[gk].subgroups[sk].tasks.push({ name: name, values: ['pending'] });
+    updateSubPct(gk, sk);
+    renderTasks(gk, sk);
+    updateSubCardPct(sk);
+    updateGlobalBar();
+    markDirty();
+    // Scroll to bottom of table
+    var tbl = document.getElementById('taskTable');
+    if (tbl) tbl.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+
+  // ── DELETE TASK ───────────────────────────────────
+  function deleteTask(gk, sk, ti) {
+    if (!confirm('¿Eliminar esta tarea?')) return;
+    DATA.groups[gk].subgroups[sk].tasks.splice(ti, 1);
+    updateSubPct(gk, sk);
+    renderTasks(gk, sk);
+    updateSubCardPct(sk);
+    updateGlobalBar();
+    markDirty();
+  }
+
+  // ── EDIT TASK ─────────────────────────────────────
+  var editCtx = null;
+  function openEditTask(gk, sk, ti) {
+    editCtx = { gk: gk, sk: sk, ti: ti };
+    var name = DATA.groups[gk].subgroups[sk].tasks[ti].name;
+    document.getElementById('editTaskInput').value = name;
+    document.getElementById('editTaskModal').classList.remove('hidden');
+    setTimeout(function () {
+      var inp = document.getElementById('editTaskInput');
+      inp.focus(); inp.select();
+    }, 80);
+  }
+  function saveEditTask() {
+    if (!editCtx) return;
+    var name = document.getElementById('editTaskInput').value.trim();
+    if (!name) return;
+    DATA.groups[editCtx.gk].subgroups[editCtx.sk].tasks[editCtx.ti].name = name;
+    document.getElementById('editTaskModal').classList.add('hidden');
+    renderTasks(editCtx.gk, editCtx.sk);
+    markDirty();
+    editCtx = null;
+  }
+
+  function updateSubCardPct(sk) {
+    if (!currentGroup) return;
+    var sub  = DATA.groups[currentGroup].subgroups[sk];
+    var pct  = sub.pct;
+    var col  = pctColor(pct);
+    var card = document.querySelector('.sub-card[data-sk="' + sk + '"]');
+    if (card) {
+      card.querySelector('.sub-card-bar-fill').style.width      = (pct*100) + '%';
+      card.querySelector('.sub-card-bar-fill').style.background = col;
+      card.querySelector('.sub-card-pct').textContent           = Math.round(pct*100) + '%';
+    }
+  }
+
+
+  document.querySelectorAll('.filter-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      currentFilter = btn.dataset.filter;
+      document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      if (currentSubgroup) renderTasks(currentGroup, currentSubgroup);
+    });
+  });
+
+  document.getElementById('sortBtn').addEventListener('click', function () {
+    sortByStatus = !sortByStatus;
+    this.classList.toggle('active', sortByStatus);
+    if (currentSubgroup) renderTasks(currentGroup, currentSubgroup);
+  });
+
+  // ── EVENTS ───────────────────────────────────────
+  document.getElementById('editTaskSaveBtn').addEventListener('click', saveEditTask);
+  document.getElementById('editTaskCancelBtn').addEventListener('click', function () {
+    document.getElementById('editTaskModal').classList.add('hidden');
+    editCtx = null;
+  });
+  document.getElementById('editTaskInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter')  saveEditTask();
+    if (e.key === 'Escape') {
+      document.getElementById('editTaskModal').classList.add('hidden');
+      editCtx = null;
+    }
+  });
+
+  
+  document.getElementById('loginSubmitBtn').addEventListener('click', doLogin);
+  document.getElementById('loginCancelBtn').addEventListener('click', closeLogin);
+  document.getElementById('loginPass').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter')  doLogin();
+    if (e.key === 'Escape') closeLogin();
+  });
+  document.getElementById('logoutBtn').addEventListener('click', doLogout);
+  document.getElementById('saveBtn').addEventListener('click', saveData);
+  document.getElementById('backBtn').addEventListener('click', showSummary);
+
+  document.getElementById('taskTable').addEventListener('click', function (e) {
+    var chip = e.target.closest('.status-chip.editable');
+    if (chip) { cycleStatus(chip); return; }
+    var act = e.target.closest('.t-act-btn');
+    if (act) {
+      var ti = parseInt(act.dataset.ti, 10);
+      var gk = act.dataset.gk;
+      var sk = act.dataset.sk;
+      if (act.dataset.act === 'del')  deleteTask(gk, sk, ti);
+      if (act.dataset.act === 'edit') openEditTask(gk, sk, ti);
+    }
+  });
+
+  document.querySelectorAll('.modal-overlay').forEach(function (el) {
+    el.addEventListener('click', function (e) { if (e.target === el) el.classList.add('hidden'); });
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay').forEach(function (m) { m.classList.add('hidden'); });
+    }
+  });
+
+  // ── INIT ─────────────────────────────────────────
+  dbLoad()
+    .then(function (data) {
+      DATA = data;
+      document.getElementById('loadingScreen').classList.add('hidden');
+      render();
+    })
+    .catch(function (err) {
+      DATA = JSON.parse(JSON.stringify(DEFAULT_DATA));
+      document.getElementById('loadingScreen').classList.add('hidden');
+      render();
+      showToast('Error cargando datos: ' + err.message, 'err');
+    });
+
+}());
+</script>
+</body>
+</html>
